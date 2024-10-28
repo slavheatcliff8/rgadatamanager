@@ -1,0 +1,3338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGA Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+                font-family: Arial, sans-serif;
+                overflow: hidden; /* Отключает прокрутку страницы */
+                position: fixed; /* Фиксирует страницу на месте */
+                width: 100%; /* Устанавливает ширину на 100% экрана */
+                height: 100%; /* Устанавливает высоту на 100% экрана */
+        }
+
+        #bar-line {
+            display: flex;
+            justify-content: space-between; /* Равномерное распределение левой и правой частей */
+            margin-bottom: 20px;
+            height: 150px;
+        }
+
+        .left-buttons {
+            display: flex;
+            flex-direction: column; /* Две группы кнопок в две строки */
+            gap: 10px; /* Отступ между строками кнопок */
+            height: 50px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px; /* Пространство между кнопками в строке */
+        }
+
+        .center-controls {
+            display: flex;
+            height: 55px;
+            width: 100%;
+            margin-top: 30px;
+            gap: 5px; /* Отступы между элементами */
+        }
+
+        .center-controls label {
+            margin-right: 0px;
+            margin-top: 15px;
+            width: 50px;
+
+        }
+        .center-controls input {
+            margin-right: 2px!important;
+            margin-top: 10px;
+            width: 50px;
+
+        }
+
+        #menu-1 {
+            width: 50%; /* Ширина меню */
+            height: 120px;
+        }
+
+        .tab-content {
+                display: none;
+        }
+
+        .tab-content-6 {
+                display: none;
+                overflow-y:auto;
+
+        }
+
+        .image-container h2 {
+                display: flex;
+                align-items: center; /* Вертикальное выравнивание по центру */
+                margin: 0; /* Убирает стандартные отступы заголовка */
+        }
+
+        .image-container img {
+                height: 70px; /* Устанавливаем высоту изображения */
+                margin-right: 10px; /* Отступ между изображением и текстом */
+                vertical-align: middle; /* Вертикальное выравнивание изображения по центру строки */
+        }
+
+        .image-container h2 span {
+                display: inline-flex;
+                align-items: center; /* Вертикальное выравнивание текста */
+        }
+
+        .tab-button {
+                cursor: pointer;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 15px;
+        }
+
+        .button-add-grey {
+                cursor: pointer;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 13px;
+                height: 50px;
+                width: 150px;
+        }
+        .sendToComparison {
+                cursor: pointer;
+                padding: 5px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                height: 30px;
+                width: 150px;
+        }
+        .sendToComparison:active {
+            transform: scale(0.95); /* Уменьшение кнопки при нажатии */
+            background-color: #d1d1d1; /* Изменение цвета фона при нажатии */
+        }
+
+        .button-add-reference {
+                cursor: pointer;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #0000006b;
+                border-radius: 5px;
+                background-color: #4bc0c033!important;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+        }
+
+        .button-add-data {
+                cursor: pointer;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #ff638433!important;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+        }
+        
+        
+        .button-add-comparison {
+                cursor: pointer;
+                padding: 10px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #473737b0 !important;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                color:"white";
+        }
+
+        .tab-button.active {
+                background-color: #f7caca;
+        }
+
+        .table-container {
+                display: flex; /* Flexbox для размещения таблиц в ряд */
+                justify-content: flex-start;
+                width: 95%;
+                border: 0px solid #ddd;
+                max-height: 600px; 
+                margin: 20px auto;
+                padding: 10px;
+                overflow-x: auto; /* Добавляет горизонтальную прокрутку */
+                overflow-y: auto!important; /* Добавляет вертикальную прокрутку */
+        }
+        #menu-2 {
+                display: flex; /* Flexbox для размещения таблиц в ряд */
+                justify-content: flex-start;
+                width: 95%;
+                height: 500px;
+                overflow: auto; /* Добавляет прокрутку */
+                border: 0px solid #ddd;
+                margin: 20px auto;
+                padding: 10px;
+        }
+
+        .table-container-comp {
+                display: flex; /* Flexbox для размещения таблиц в ряд */
+                justify-content: flex-start;
+                width: 95%;
+                height: 100px;
+                overflow: auto; /* Добавляет прокрутку */
+                border: 0px solid #ddd;
+                margin: 20px auto;
+                padding: 10px;
+        }
+
+        .table-container table {
+                border-collapse: collapse;
+                margin-right: 20px; /* Отступ между таблицами */
+        }
+
+        .table-container-comp table {
+                border-collapse: collapse;
+                margin-right: 20px; /* Отступ между таблицами */
+        }
+
+        .table-container table:last-of-type {
+                margin-right: 0; /* Убираем отступ у последней таблицы */
+        }
+
+        .table-container-comp table:last-of-type {
+                margin-right: 0; /* Убираем отступ у последней таблицы */
+        }
+
+        table, th, td {
+                width: 150px; /* Фиксированная ширина ячеек */
+                height: 40px; /* Фиксированная высота ячеек */
+                border: 1px solid;
+                text-align: center;
+                padding: 0;
+                box-sizing: border-box;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+        }
+
+        th {
+                background-color: #f7caca;
+                height: 40px;
+        }
+
+        .highlight {
+                background-color: #ffffff;
+        }
+
+        .controls {
+                margin-bottom: 20px;
+        }
+
+        .controls label {
+                margin-right: 10px;
+        }
+
+        .summary-table {
+                border-collapse: collapse;
+        }
+
+        .summary-table th, .summary-table td {
+                border: 1px solid black;
+                padding: 8px;
+        }
+
+        .summary-table th {
+                background-color: #f7caca;
+        }
+
+        .data-table-container {
+                display: flex;
+        }
+
+        .gray-row {
+                background-color: #a7dfe6; /* Серый цвет */
+                height: 40px; /* Высота строки */
+        }
+
+        thead th {
+                position: sticky;
+                top: 0;
+                background-color: #f7caca; /* Цвет фона для заголовка, чтобы он выделялся */
+                z-index: 1; /* Чтобы заголовок был поверх других элементов при прокрутке */
+        }
+        .сont{
+            border: 1px solid black;
+            width: 100%;
+            height: auto;
+            overflow: auto;
+        }
+        #chartContainer {
+            position: relative;
+            width: 60%; /* Ширина контейнера на всю ширину родителя */
+            height: 460px; /* Начальная высота контейнера */
+            margin-top: 20px;
+            margin-left: 5px;
+            font-family: 'Helvetica', sans-serif; /* Используем шрифт Helvetica */
+            border: 1px solid #ddd; /* Линия вокруг контейнера для визуализации */
+            overflow: hidden; /* Скрытие содержимого, выходящего за пределы контейнера */
+            resize: both; /* Разрешение растягивания контейнера */
+            box-sizing: border-box; /* Учитывать границы и отступы при расчете размеров */
+        }
+        
+        canvas {
+            display: block;
+            width: 100% !important;  /* Ширина холста в процентах от контейнера */
+            height: 100% !important; /* Высота холста в процентах от контейнера */
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 16px;
+            height: 16px;
+            background: #ddd;
+            cursor: se-resize;
+        }
+        .square-button-active {
+            width: auto; /* Ширина кнопки */
+            min-width: 1.5cm;
+            height: 1.5cm; /* Высота кнопки */
+            background-color: #60656674; /* Голубой цвет */
+            color: white; /* Цвет текста */
+            border: none; /* Убираем бордер */
+            border-radius: 5px; /* Скругляем углы (по желанию) */
+            font-size: 19px; /* Размер шрифта */
+            font-weight: bold; /* Жирный шрифт */
+            cursor: pointer; /* Курсор при наведении */
+            display: flex; /* Используем flexbox для центрирования текста */
+            align-items: center; /* Вертикальное центрирование текста */
+            justify-content: center; /* Горизонтальное центрирование текста */
+            text-align: center; /* Выравнивание текста по центру */
+            text-transform: none; /* Преобразуем текст в верхний регистр, если необходимо */
+            display: inline-block; /* Размещаем кнопки в одну строку */
+            margin-right: 10px; /* Расстояние между кнопками */
+        }
+
+        input[type="number"] {
+            width: 50px; /* Устанавливаем ширину для всех полей с типом number */
+            height: 20px; 
+            text-align: center; /* Выравнивание текста по центру */
+            justify-content: center; /* Горизонтальное центрирование текста */
+        }
+        .pdf-table-container {
+            display: flex; /* Для расположения контейнеров по горизонтали */
+            flex-direction: column; /* Размещаем контейнеры вертикально */
+            justify-content: flex-start;
+            width: 230mm;
+            height: 700px;
+            overflow: auto; /* Добавляет прокрутку */
+            border: 0px solid #ddd;
+            padding: 10px;
+        }
+
+        .pdf-body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .pdf-container {
+            width: 210mm; /* Ширина A4 */
+            height: 297mm;
+            background-color: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column; /* Устанавливаем вертикальное направление */
+            padding: 20px;
+            box-sizing: border-box; /* Учитывает padding в размерах */
+            margin-bottom: 20px; /* Отступ между контейнерами */
+        }
+
+        .pdf-logo {
+            width: 29.6mm; /* Ширина A4 */
+            height: 29.6mm; /* Высота A4 */
+        }
+
+        .pdf-logo-cont {
+            height: auto; /* Автоматическая высота */
+            align-items: center; /* Центрирование по вертикали */
+            margin-bottom: 3px; /* Отступ снизу для логотипа */
+        }
+        .pdf-text-header-big {
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            text-align: center; /* Вертикальное выравнивание по центру */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 145px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            padding-top: 41px; /* Убираем отступы, чтобы текст был по центру */
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 5px;
+        }
+        .pdf-text-name {
+            width: 140px; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 15px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            box-sizing: border-box; /* Учитываем границы в размерах */
+
+        }
+        .pdf-text-info {
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 35px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px;
+            padding: 0px;
+        }
+        .pdf-text-yes-no {
+            width: 250px; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 15px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            box-sizing: border-box; /* Учитываем границы в размерах */
+        }
+
+
+        .pdf-text-header-small {
+            text-align: center; /* Центрируем текст */
+            font-size: 20px;
+            font-weight: bold;
+            font-family: 'Arial', rgba(15, 23, 72, 1);
+            padding: 10px 0; /* Отступ сверху и снизу */
+        }
+
+        .pdf-text-logo {
+            text-align: center; /* Центрируем текст */
+            font-size: 13px;
+            font-weight: bold;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            margin-top: 3px; /* Отступ сверху для текста логотипа */
+        }
+
+        .pdf-header {
+            display: flex; /* Flexbox для выравнивания логотипа и текста */
+            justify-content: space-between; /* Распределение пространства между элементами */
+            align-items: center; /* Центрирование по вертикали */
+        }
+        .pdf-info {
+            display: flex; /* Flexbox для выравнивания логотипа и текста */
+            justify-content: space-between; /* Распределение пространства между элементами */
+            align-items: center; /* Центрирование по вертикали */
+            margin-top: 15px;
+        }
+        
+        .pdf-text-sample-name {
+            font-size: 18px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);
+            font-weight: bold;
+        }
+        .pdf-text-plots-name {
+            font-size: 18px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);
+            font-weight: bold;
+        }
+        .pdf-text-handover-date {
+            font-size: 18px;
+            align-items: left; 
+            width: 210px; /* Ширина 100% контейнера */
+            font-family: 'Arial', rgba(15, 23, 72, 1);
+            font-weight: bold;
+            margin-left: 150px;
+            
+        }
+        .pdf-text-sample-data {
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 40.6mm; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px;
+        }
+        .pdf-text-sample-box {
+            display: flex; /* Включаем Flexbox */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 25px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            padding: 0px;
+        }
+        .pdf-text-measurement-details-box {
+            display: flex; /* Включаем Flexbox */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 22px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            padding: 0px;
+        }
+
+        label {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group1 {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .checkbox-group2 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 90px;
+            margin-right: 10px;
+        }
+        .checkbox-group3 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 182px;
+            margin-right: 10px;
+        }
+        .pdf-text-checkbox {
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 380px; /* Ширина 100% контейнера */
+            height: 35px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 40px;
+            padding: 0px;
+        } 
+        .pdf-text-final-pressure {
+            width: 220px; /* Ширина 100% контейнера */
+            height: 35px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-right: 410px;
+            padding: 0px;
+        } 
+        .pdf-text-final-remarks {
+        
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 120px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 16px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px;
+            padding: 0px;
+        } 
+        .checkbox-alfresco-1 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 0px;
+            margin-right: 10px;
+            
+        }
+
+        .checkbox-alfresco-2 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 60px;
+            margin-right: 10px;
+        }
+        .checkbox-alfresco-3 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 50px;
+            margin-right: 10px;
+        }
+        .checkbox-alfresco-4 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 170px;
+            margin-right: 10px;
+        }
+        .checkbox-alfresco-5 {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            margin-left: 148px;
+            margin-right: 10px;
+        }
+
+        .pdf-plot {
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 90mm; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px;
+            padding: 0px;
+        }
+        .pdf-text-sample-plot {
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 100.6mm; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 3px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 50px;
+        }
+        .pdf-2-name-pressure{
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 53.6mm; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 10px;
+            
+        }
+        .pdf-2-name-data{
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 53.6mm; /* Ширина 100% контейнера */
+            height: 30px; /* Фиксированная высота */
+            border: 2px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-right: 50px;
+            margin-left: 10px;
+            
+        }
+        .pdf-2-text-pressure {
+            height: 30px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 15px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            box-sizing: border-box; /* Учитываем границы в размерах */
+        }
+        .pdf-2-text-data {
+            height: 30px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 15px;
+            font-family: 'Arial', rgba(15, 23, 72, 1);;
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px;
+        }
+        .pdf-summary-big{
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 100%; /* Ширина 100% контейнера */
+            height: 20px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 18px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-right: 50px;
+            margin-left: 10px;
+            
+        }
+        .pdf-summary-name{
+            display: flex; /* Включаем Flexbox */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 400px; /* Ширина 100% контейнера */
+            height: 20px; /* Фиксированная высота */
+            border: 0px solid rgba(15, 23, 72, 1);
+            font-size: 14px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 20px; 
+        }
+        .pdf-summary-date{
+            display: flex; /* Включаем Flexbox */
+            justify-content: center; /* Горизонтальное выравнивание по центру */
+            align-items: center; /* Вертикальное выравнивание по центру */
+            width: 100px; /* Ширина 100% контейнера */
+            height: 20px; /* Фиксированная высота */
+            border: 2px solid rgb(0, 0, 0);
+            font-size: 14px;
+            font-family: 'Arial', rgb(0, 0, 0);
+            box-sizing: border-box; /* Учитываем границы в размерах */
+            margin-left: 0px; 
+        }
+
+        .button-container {
+            display: flex;
+            max-width: 1400px; /* Ширина контейнера */
+            overflow-x: auto; /* Включает вертикальную прокрутку */
+        }
+
+        .element-wrapper {
+            display: flex;
+            flex-direction: column; /* Размещаем кнопку элемента и пикер цвета вертикально */
+            align-items: center; /* Центрируем пикеры под кнопками */
+           
+        }
+
+        input[type="color"] {
+            cursor: pointer;
+            width: 100%;
+            height: 20px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        @media print {
+            /* Сбрасываем стили для печати */
+            body {
+                position: static;  
+                margin: 0;
+                padding: 0;
+                scale: 95%; /* Можно изменить значение для подгона контента */
+            }
+
+            /* Скрываем все элементы, кроме тех, что нужно напечатать */
+
+            /* Делаем видимыми только нужные элементы и их содержимое */
+            #end-file-1, #end-file-2, #end-file-3 {
+                visibility: visible;
+                position: static;
+                page-break-before: auto; /* Автоматическое разбиение страниц */
+                page-break-after: auto;
+            }
+
+            /* Останавливаем разрывы страниц внутри таблиц и изображений */
+            table, img {
+                page-break-inside: avoid;
+            }
+
+            /* Стиль для каждого блока */
+            #end-file-1, #end-file-2, #end-file-3 {
+                width: 100%; /* Можно зафиксировать ширину, например, 1000px для большей консистентности */
+                margin-bottom: 5px; /* Разделяем элементы */
+                padding: 0px;
+                box-shadow: none; /* Убираем тени */
+                border: none; /* Убираем границы */
+            }
+
+            /* Устанавливаем точные отступы для каждого блока */
+            #end-file-1 {
+                margin-top: 0;
+                
+            }
+
+            #end-file-2 {
+                margin-top: 0px; /* Добавляем отступы вместо отрицательных значений */
+            }
+
+            #end-file-3 {
+                margin-top: 0px; /* Добавляем отступы вместо отрицательных значений */
+            }
+            
+            /* Устанавливаем фиксированные размеры, чтобы одинаково рендерилось в разных браузерах */
+            @page {
+                size: A4; /* Или можно использовать размер, подходящий вашему контенту, например "letter" */
+                margin: 10mm; /* Поля страницы, чтобы контент не обрезался */
+            }
+        }
+        .popup {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 140px;
+        }
+
+        .popup input {
+            width: 35px;
+        }
+
+        .popup button {
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+
+        .choise-of-the-quelle {
+            cursor: pointer;
+                padding: 5px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                height: 30px;
+                width: 150px;
+        }
+        
+        .choise-of-the-quelle2 {
+            cursor: pointer;
+                padding: 5px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                height: 30px;
+                width: 150px;
+        }
+        
+        .choise-of-the-quelle3 {
+            cursor: pointer;
+                padding: 5px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                height: 30px;
+                width: 150px;
+        }
+        
+        .choise-of-the-quelle4 {
+            cursor: pointer;
+                padding: 5px;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f1f1f1;
+                font-family: Helvetica, Helvetica;
+                font-size: 12px;
+                height: 30px;
+                width: 150px;
+        }
+
+
+        /* Адаптивные стили */
+    </style>
+</head>
+<body>
+
+    <div class="image-container">
+        <h2><img src="Logo_XFEL_positiv_.jpg" alt="Logo"> <span>RGA Data Manager</span></h2>
+    </div>
+    <br><br>
+    <div>
+        <button class="tab-button active" onclick="showTab(1)"><b>Reference raw</b></button>
+        <button class="tab-button" onclick="showTab(2)"><b>Reference w/o noise</b></button>
+        <button class="tab-button" onclick="showTab(3)"><b>Sample raw</b></button>
+        <button class="tab-button" onclick="showTab(4)"><b>Sample w/o noise</b></button>
+        <button class="tab-button" onclick="showTab(5)"><b>Comparison</b></button>
+        <button class="tab-button" onclick="showTab(6)"><b>Visualization</b></button>
+        <button class="tab-button" onclick="showTab(7)"><b>Result sheet</b></button>
+    </div>
+
+    <div id="tab1" class="tab-content">
+        <h3>Reference raw</h3>
+        <div class="controls">
+            <label><b>File:   </b></label>  
+            <input type="file" id="fileInput1" data-tab-number="1" />
+        </div>
+        <div class="controls">
+            <label><b>Quelle:</b></label> 
+            <button class="choise-of-the-quelle" data-tab="1" data-tab-number = "1" value = "Karabo">Karabo</button>
+
+            <label><b>Used measurements</b> From:              
+                <input type="number" id="startInterval1" value="1" min="1">
+            </label>
+            <label>To:
+                <input type="number" id="endInterval1" value="100" min="1">
+            </label>
+            <button class="sendToComparison" data-tab="1" data-ref="1" style="margin-left: 10px;">Send to comparison</button>
+        </div>
+        <div class="table-container">
+            <table id="summaryTable1" class="summary-table">
+                <!-- Содержимое таблицы summaryTable1 -->
+            </table>
+            <table id="dataTable1">
+                <!-- Содержимое таблицы dataTable1 -->
+            </table>
+        </div>
+    </div>
+
+    <div id="tab2" class="tab-content">
+        <h3>Ref noise removal</h3>
+        <div class="controls">
+            <label><b>File:   </b></label>  
+            <input type="file" id="fileInput2" data-tab-number="2" />
+        </div>
+        <div class="controls">
+            <label><b>Quelle:</b></label> 
+            <button class="choise-of-the-quelle" data-tab="2" data-tab-number = "2" value = "Karabo">Karabo</button>
+
+            <label><b>Used measurements</b> From:              
+                <input type="number" id="startInterval2" value="1" min="1">
+            </label>
+            <label>To:
+                <input type="number" id="endInterval2" value="100" min="1">
+            </label>
+            <button class="sendToComparison" data-tab="2" data-ref="1" style="margin-left: 10px;">Send to comparison</button>
+        </div>
+        <div class="table-container">
+            <table id="summaryTable2" class="summary-table">
+                <!-- Содержимое таблицы summaryTable2 -->
+            </table>
+            <table id="dataTable2">
+                <!-- Содержимое таблицы dataTable2 -->
+            </table>
+        </div>
+    </div>
+
+    <div id="tab3" class="tab-content">
+        <h3>Sample data</h3>
+        <div class="controls">
+            <label><b>File:   </b></label>  
+            <input type="file" id="fileInput3" data-tab-number="3" />
+        </div>
+        <div class="controls">
+            <label><b>Quelle:</b></label> 
+            <button class="choise-of-the-quelle" data-tab="3" data-tab-number = "3">Karabo</button>
+
+            <label><b>Used measurements</b> From:              
+                <input type="number" id="startInterval3" value="1" min="1">
+            </label>
+            <label>To:
+                <input type="number" id="endInterval3" value="100" min="1">
+            </label>
+            <button class="sendToComparison" data-tab="3" data-ref="2" style="margin-left: 10px;">Send to comparison</button>
+        </div>
+        <div class="table-container">
+            <table id="summaryTable3" class="summary-table">
+                <!-- Содержимое таблицы summaryTable3 -->
+            </table>
+            <table id="dataTable3">
+                <!-- Содержимое таблицы dataTable3 -->
+            </table>
+        </div>
+    </div>
+
+    <div id="tab4" class="tab-content">
+        <h3>Data noise removal</h3>
+        <div class="controls">
+            <label><b>File:   </b></label>  
+            <input type="file" id="fileInput4" data-tab-number="4" />
+        </div>
+        <div class="controls">
+            <label><b>Quelle:</b></label> 
+            <button class="choise-of-the-quelle" data-tab="4" data-tab-number = "4">Karabo</button>
+
+            <label><b>Used measurements</b> From:              
+                <input type="number" id="startInterval4" value="1" min="1">
+            </label>
+            <label>To:
+                <input type="number" id="endInterval4" value="100" min="1">
+            </label>
+            <button class="sendToComparison" data-tab="4" data-ref="2" style="margin-left: 10px;">Send to comparison</button>
+        </div>
+        <div class="table-container">
+            <table id="summaryTable4" class="summary-table">
+                <!-- Содержимое таблицы summaryTable4 -->
+            </table>
+            <table id="dataTable4">
+                <!-- Содержимое таблицы dataTable4 -->
+            </table>
+        </div>
+    </div>
+
+
+    <div id="tab5" class="tab-content">
+        <h3>Comparison</h3>
+        <label><b>Reference average</b></label>
+        <div class="controls">
+            <div class="table-container-comp">
+                <table id="summaryTable5" class="summary-table">
+                    <!-- Содержимое таблицы summaryTable5 -->
+                </table>
+                <table id="dataTable5">
+                    <!-- Содержимое таблицы dataTable5 -->
+                </table>
+            </div>
+        </div>
+        <br><br>
+        <!-- Лейбл "Data average" -->
+        <label><b>Data average</b></label>
+        <div class="controls">
+            <div class="table-container-comp">
+                <table id="summaryTable6" class="summary-table">
+                    <!-- Содержимое таблицы summaryTable6 -->
+                </table>
+                <table id="dataTable6">
+                    <!-- Содержимое таблицы dataTable6 -->
+                </table>
+            </div>
+        </div>
+        <label><b>Comparison</b></label>
+        <div class="controls">
+            <div class="table-container-comp">
+                <table id="summaryTable7" class="summary-table">
+                    <!-- Содержимое таблицы summaryTable6 -->
+                </table>
+                <table id="dataTable7">
+                    <!-- Содержимое таблицы dataTable6 -->
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="tab6" class="tab-content">
+        <h3>Data Visualization</h3>
+        
+        <!-- Контейнер для диаграммы -->
+        <div id="menu-1">
+            <div id="bar-line">
+                <!-- Левая часть: две строки кнопок -->
+                <div class="left-buttons">
+                    <!-- Первая группа кнопок -->
+                    <div class="button-group">
+                        <input type="color" id="colorPicker_reference_bar" style = "width: 15px; height: 50px; margin-right: 0;" value="#4BC0C0">
+                        <button id="toggleChartFromTable5" class="button-add-grey" >Add/delete Reference<br><b>(chart)</b></button>
+                        <div id="opacityPopup_reference" class="popup" style="display: none;">
+                            <label for="opacityInput_reference_bar">Opacity (0 - 100%):</label>
+                            <input type="number" id="opacityInput_reference_bar" min="0" max="100" step="5" value="40">
+                            <button id="applyOpacity_reference">Apply</button>
+                        </div>
+                        <input type="color" id="colorPicker_sample_bar" style = "width: 15px; height: 50px;  margin-right: 0px;" value="#ff6384">
+                        <button id="toggleChartFromTable6" class="button-add-grey">Add/delete Data<br><b>(chart)</b></button>
+                        <div id="opacityPopup_sample" class="popup" style="display: none;">
+                            <label for="opacityInput_sample_bar">Opacity (0 - 100%):</label>
+                            <input type="number" id="opacityInput_sample_bar" min="0" max="100" step="5" value="40">
+                            <button id="applyOpacity_sample">Apply</button>
+                        </div>
+                        <input type="color" id="colorPicker_comparison_bar" style = "width: 15px; height: 50px;  margin-right:0px; border-width: 0px;" value="#464544">
+                        <button id="toggleChartFromTable7" class="button-add-grey">Add the comparison<br><b>(chart)</b></button>
+                        <div id="opacityPopup_comparison" class="popup" style="display: none;">
+                            <label for="opacityInput_comarison_bar">Opacity (0 - 100%):</label>
+                            <input type="number" id="opacityInput_comparison_bar" min="0" max="100" step="5" value="40">
+                            <button id="applyOpacity_comparison">Apply</button>
+                        </div>
+                        <input type="color" id="colorPicker_vacuum_100" style = "width: 15px; height: 50px; margin-right: 0px;" value="#ff4400">
+                        <button id="vacuum_100" class="button-add-grey">Add the Vacuum Line<br><b>(1/100)</b></button>
+                        <button class="button-add-grey"><label for="yMin">Y Min:</label>
+                        <input type="number" id="yMin" step="0.1" value="1e-15"></button>
+                        <button class="button-add-grey"><label for="xMin">X Min:</label>
+                        <input type="number" id="xMin" step="0.1" value="1"></button>
+                        <button id="saveButton" class="button-add-grey">Save the plot</button>
+                        <button id="downloadBtn_refernce" class="button-add-grey">Send to result sheet<br><b>Reference</b></button>
+                        <button id="clearHistograms" class="button-add-grey">Clear the plot</button>
+                    </div>
+                    <!-- Вторая группа кнопок -->
+                    <div class="button-group">
+                        <input type="color" id="colorPicker_reference_line" style = "width: 15px; height: 50px; margin-right: 0px;" value="#4BC0C0">
+                        <button id="toggleChartFromTable5-2" class="button-add-grey">Add/delete Reference<br><b>(line)</b></button>
+                        <input type="color" id="colorPicker_sample_line" style = "width: 15px; height: 50px; margin-right: 0px;" value="#FF6384">
+                        <button id="toggleChartFromTable6-2" class="button-add-grey">Add/delete Data<br><b>(line)</b></button>
+                        <input type="color" id="colorPicker_comparison_line" style = "width: 15px; height: 50px; margin-right: 0px;" value="#464544">
+                        <button id="toggleChartFromTable7-2" class="button-add-grey">Add the comparison<br><b>(line)</b></button>
+                        <input type="color" id="colorPicker_vacuum_1000" style = "width: 15px; height: 50px; margin-right: 0px;" value="#ff4400">
+                        <button id="vacuum_1000" class="button-add-grey">Add the Vacuum Line<br><b>(1/1000)</b></button>
+                        <button class="button-add-grey"><label for="yMax">Y Max:</label>
+                        <input type="number" id="yMax" step="0.1" value="1e-6"></button>
+                        <button class="button-add-grey"><label for="xMax">X Max:</label>
+                        <input type="number" id="xMax" step="0.1" value="100"></button>
+                        <button id="downloadBtn_sample" class="button-add-grey">Send to result sheet<br><b>Sample</b></button>
+                        <button id="downloadBtn_summary" class="button-add-grey">Send to result sheet<br><b>Summary</b></button>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+            <!-- Для каждой кнопки элемента создаем отдельный контейнер с цветовым пикером под ней -->
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Water" class="square-button-active" element="Water">H<sub>2</sub>O</button>
+                <input type="color" id="colorPicker_Water" value="#00BFFF">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_CarbonDioxide" class="square-button-active" element="CarbonDioxide">CO<sub>2</sub></button>
+                <input type="color" id="colorPicker_CarbonDioxide" value="#ff4400">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Oxygen" class="square-button-active" element="Oxygen">O<sub>2</sub></button>
+                <input type="color" id="colorPicker_Oxygen" value="#41cb8f">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Nitrogen" class="square-button-active" element="Nitrogen">N<sub>2</sub></button>
+                <input type="color" id="colorPicker_Nitrogen" value="#010055">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Air" class="square-button-active" element="Air">Air</button>
+                <input type="color" id="colorPicker_Air" value="#5bd1ff">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_TurbopumpOil" class="square-button-active" element="TurbopumpOil">TPump Oil</button>
+                <input type="color" id="colorPicker_TurbopumpOil" value="#d5ff1d">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Trifluoromethane" class="square-button-active" element="Trifluoromethane">CHF<sub>3</sub></button>
+                <input type="color" id="colorPicker_Trifluoromethane" value="#43f343">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Tetrafluoromethane" class="square-button-active" element="Tetrafluoromethane">CF<sub>4</sub></button>
+                <input type="color" id="colorPicker_Tetrafluoromethane" value="#dc43f3">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Hydrogen" class="square-button-active" element="Hydrogen">H</button>
+                <input type="color" id="colorPicker_Hydrogen" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Helium" class="square-button-active" element="Helium">He</button>
+                <input type="color" id="colorPicker_Helium" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Methane" class="square-button-active" element="Methane">CH<sub>4</sub></button>
+                <input type="color" id="colorPicker_Methane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Ammonia" class="square-button-active" element="Ammonia">NH<sub>3</sub></button>
+                <input type="color" id="colorPicker_Ammonia" value="#959296">
+            </div>    
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Neon" class="square-button-active" element="Neon">Ne</button>
+                <input type="color" id="colorPicker_Neon" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Acetylene" class="square-button-active" element="Acetylene">C<sub>2</sub>H<sub>2</sub></button>
+                <input type="color" id="colorPicker_Acetylene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Diborane" class="square-button-active" element="Diborane">B<sub>2</sub>H<sub>6</sub></button>
+                <input type="color" id="colorPicker_Diborane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_VinylChloride" class="square-button-active" element="VinylChloride">C<sub>2</sub>H<sub>3</sub>Cl</button>
+                <input type="color" id="colorPicker_VinylChloride" value="#959296">
+            </div>            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_CarbonMonoxide" class="square-button-active" element="CarbonMonoxide">CO</button>
+                <input type="color" id="colorPicker_CarbonMonoxide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Ethylene" class="square-button-active" element="Ethylene">C<sub>2</sub>H<sub>4</sub></button>
+                <input type="color" id="colorPicker_Ethylene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Ethane" class="square-button-active" element="Ethane">C<sub>2</sub>H<sub>6</sub></button>
+                <input type="color" id="colorPicker_Ethane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Propane" class="square-button-active" element="Propane">C<sub>3</sub>H<sub>8</sub></button>
+                <input type="color" id="colorPicker_Propane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Acetaldehyde" class="square-button-active" element="Acetaldehyde">CH<sub>3</sub>CHO</button>
+                <input type="color" id="colorPicker_Acetaldehyde" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_FormicAcid" class="square-button-active" element="FormicAcid">HCOOH</button>
+                <input type="color" id="colorPicker_FormicAcid" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_NitricAcid" class="square-button-active" element="NitricAcid">HNO<sub>3</sub></button>
+                <input type="color" id="colorPicker_NitricAcid" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Silane" class="square-button-active" element="Silane">SiH<sub>4</sub></button>
+                <input type="color" id="colorPicker_Silane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_NitrogenDioxide" class="square-button-active" element="NitrogenDioxide">NO<sub>2</sub></button>
+                <input type="color" id="colorPicker_NitrogenDioxide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Methanol" class="square-button-active" element="Methanol">CH<sub>3</sub>OH</button>
+                <input type="color" id="colorPicker_Methanol" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_EthyleneGlycol" class="square-button-active" element="EthyleneGlycol">C<sub>2</sub>H<sub>6</sub>O<sub>2</sub></button>
+                <input type="color" id="colorPicker_EthyleneGlycol" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Ethanol" class="square-button-active" element="Ethanol">C<sub>2</sub>H<sub>5</sub>OH</button>
+                <input type="color" id="colorPicker_Ethanol" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_HydrogenSulfide" class="square-button-active" element="HydrogenSulfide">H<sub>2</sub>S</button>
+                <input type="color" id="colorPicker_HydrogenSulfide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Argon" class="square-button-active" element="Argon">Ar</button>
+                <input type="color" id="colorPicker_Argon" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Propene" class="square-button-active" element="Propene">C<sub>3</sub>H<sub>6</sub></button>
+                <input type="color" id="colorPicker_Propene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Acetone" class="square-button-active" element="Acetone">CH<sub>3</sub>COCH<sub>3</sub></button>
+                <input type="color" id="colorPicker_Acetone" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Butane" class="square-button-active" element="Butane">C<sub>4</sub>H<sub>10</sub></button>
+                <input type="color" id="colorPicker_Butane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_MethylEthylKetone" class="square-button-active" element="MethylEthylKetone">C<sub>4</sub>H<sub>8</sub>O</button>
+                <input type="color" id="colorPicker_MethylEthylKetone" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_MPOil" class="square-button-active" element="MPOil">MPOil</button>
+                <input type="color" id="colorPicker_MPOil" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_AceticAcid" class="square-button-active" element="AceticAcid">CH<sub>3</sub>COOH</button>
+                <input type="color" id="colorPicker_AceticAcid" value="#959296">
+            </div>           
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_NitrousOxide" class="square-button-active" element="NitrousOxide">N<sub>2</sub>O</button>
+                <input type="color" id="colorPicker_NitrousOxide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_IsopropylAlcohol" class="square-button-active" element="IsopropylAlcohol">C<sub>3</sub>H<sub>8</sub>O</button>
+                <input type="color" id="colorPicker_IsopropylAlcohol" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_BoronTrifluoride" class="square-button-active" element="BoronTrifluoride">BF<sub>3</sub></button>
+                <input type="color" id="colorPicker_BoronTrifluoride" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_DPOilPPE" class="square-button-active" element="DPOilPPE">DPOilPPE</button>
+                <input type="color" id="colorPicker_DPOilPPE" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_NitrogenTrifluoride" class="square-button-active" element="NitrogenTrifluoride">NF<sub>3</sub></button>
+                <input type="color" id="colorPicker_NitrogenTrifluoride" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Disilane" class="square-button-active" element="Disilane">Si<sub>2</sub>H<sub>6</sub></button>
+                <input type="color" id="colorPicker_Disilane" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Diphosphine" class="square-button-active" element="Diphosphine">P<sub>2</sub>H<sub>4</sub></button>
+                <input type="color" id="colorPicker_Diphosphine" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_SulfurDioxide" class="square-button-active" element="SulfurDioxide">SO<sub>2</sub></button>
+                <input type="color" id="colorPicker_SulfurDioxide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Fomblin" class="square-button-active" element="Fomblin">Fomblin</button>
+                <input type="color" id="colorPicker_Fomblin" value="#959296">
+            </div>
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Freon13" class="square-button-active" element="Freon13">Freon 13</button>
+                <input type="color" id="colorPicker_Freon13" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_CarbonDisulfide" class="square-button-active" element="CarbonDisulfide">CS<sub>2</sub></button>
+                <input type="color" id="colorPicker_CarbonDisulfide" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Arsine" class="square-button-active" element="Arsine">AsH<sub>3</sub></button>
+                <input type="color" id="colorPicker_Arsine" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Benzene" class="square-button-active" element="Benzene">C<sub>6</sub>H<sub>6</sub></button>
+                <input type="color" id="colorPicker_Benzene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_DPOilDC705" class="square-button-active" element="DPOilDC705">DPOilDC705</button>
+                <input type="color" id="colorPicker_DPOilDC705" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Krypton" class="square-button-active" element="Krypton">Kr</button>
+                <input type="color" id="colorPicker_Krypton" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Freon12" class="square-button-active" element="Freon12">Freon 12</button>
+                <input type="color" id="colorPicker_Freon12" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_SiliconTetrafluoride" class="square-button-active" element="SiliconTetrafluoride">SiF<sub>4</sub></button>
+                <input type="color" id="colorPicker_SiliconTetrafluoride" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Toluene" class="square-button-active" element="Toluene">C<sub>7</sub>H<sub>8</sub></button>
+                <input type="color" id="colorPicker_Toluene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Trichloroethylene" class="square-button-active" element="Trichloroethylene">C<sub>2</sub>HCl<sub>3</sub></button>
+                <input type="color" id="colorPicker_Trichloroethylene" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Freon11" class="square-button-active" element="Freon11">Freon 11</button>
+                <input type="color" id="colorPicker_Freon11" value="#959296">
+            </div>
+            
+            <div class="element-wrapper">
+                <button id="addCalculatedHistogramsButton_Xenon" class="square-button-active" element="Xenon">Xe</button>
+                <input type="color" id="colorPicker_Xenon" value="#959296">
+            </div>    
+        </div>    
+        <div id="chartContainer">
+            <canvas id="myChart"></canvas>
+        </div>
+        <!-- Ваши таблицы и остальной контент для вкладки 6 -->
+    </div>
+
+    <div id="tab7" class="tab-content">
+        <h3>Result sheet</h3>
+        <div class="controls">
+            <!-- Здесь могут быть элементы управления -->
+            <button onclick="saveAsPDF()" class="button-add-grey"><b>Save as pdf / Print</b></button>
+        </div>
+        <div class="pdf-table-container"  >
+            <div class="pdf-container" id = "end-file-1">
+                <div class="pdf-header">
+                    <div class="pdf-logo-cont">
+                        <img class="pdf-logo" src="Logo_XFEL_positiv_.jpg" alt="Пример картинки">
+                        <div class="pdf-text-logo">VACUUM GROUP</div>
+                    </div>
+                    <div class="pdf-text-header-big" contenteditable="true">
+                        Residual Gas Analysis Results
+                        <br>
+                        <span class="pdf-text-header-small" contenteditable="true">for RGA qualifications in the vacuum lab test chamber</span>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">
+                    </div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-sample-name" contenteditable="false">SAMPLE</div>
+                        <div class="pdf-text-handover-date" contenteditable="false">HANDOVER DATE:</div>
+                        <div class="pdf-text-sample-data" contenteditable="true" id="data-final-3"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Designation
+                    </div>
+                    <div class="pdf-text-info" contenteditable="true">
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Requested by:
+                    </div>
+                    <div class="pdf-text-info" contenteditable="true">
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Treatment:
+                    </div>
+                    <div class="pdf-text-info" contenteditable="true">
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">
+                    </div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-sample-name" contenteditable="false">MEASUREMENT DETAILS</div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Method:
+                    </div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label><input type="checkbox" id="vac_standard" class="checkbox-group1">VAC Standard Lab Qualification</label>
+                        <label><input type="checkbox" id="baked" class="checkbox-group2">Baked </label>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">
+                    </div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label><input type="checkbox" id="Untriggered"class="checkbox-group1">VAC Untriggered</label>
+                        <label><input type="checkbox" id="Unbaked" class="checkbox-group3">Unbaked</label>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">
+                    </div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label><input type="checkbox" id="EasyView"class="checkbox-group1">EasyView</label>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">
+                    </div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label><input type="checkbox" id="Other"class="checkbox-group1">Other (specify):</label>
+                        <div class="pdf-text-checkbox" contenteditable="true"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Final pressure:</div>
+                    <div class="pdf-text-final-pressure" contenteditable="true" id="final_pressure"></div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-yes-no" contenteditable="false">Measurement date &<br>Alfresco file name:</div>
+                    <div class="pdf-text-info" contenteditable="true"></div>
+                </div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Remarks:</div>
+                    <div class="pdf-text-final-remarks" contenteditable="true"></div>
+                </div>
+
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-sample-name" contenteditable="false">CHECKOUT</div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-yes-no" contenteditable="false">Alfresco Upload:</div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label style="color: red; font-size: 18px; font-weight: bold;"><input type="checkbox" id="Raw"class="checkbox-alfresco-1">Raw data</label>
+                        <label style="color: red; font-size: 18px; font-weight: bold;"><input type="checkbox" id="Screenshots"class="checkbox-alfresco-2">Screenshots</label>
+                        <label style="color: red; font-size: 18px; font-weight: bold;"><input type="checkbox" id="Reference"class="checkbox-alfresco-3">Reference</label>
+                    </div>
+
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-yes-no" contenteditable="false">Cleared for UHV vessels<br>according specifications:</div>
+                    <div class="pdf-text-measurement-details-box" contenteditable="false">
+                        <label style="color: red; font-size: 22px;">
+                            <input type="checkbox" id="yes" class="checkbox-alfresco-4">
+                            <b>YES</b>
+                        </label>
+                        <label style="color: red; font-size: 22px;">
+                            <input type="checkbox" id="no" class="checkbox-alfresco-5">
+                            <b>NO</b>
+                        </label>
+                    </div>
+
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false">Commenced by:</div>
+                    <div class="pdf-text-info" contenteditable="true">Frederik Meyn</div>
+
+                </div>
+                
+            </div>
+            <div class="pdf-container" id = "end-file-2">
+                <div class="pdf-header">
+                    <div class="pdf-logo-cont">
+                        <img class="pdf-logo" src="Logo_XFEL_positiv_.jpg" alt="Пример картинки">
+                        <div class="pdf-text-logo">VACUUM GROUP</div>
+                    </div>
+                    <div class="pdf-text-header-big" contenteditable="true">
+                        Residual Gas Analysis Results
+                        <br>
+                        <span class="pdf-text-header-small" contenteditable="true">for RGA qualifications in the vacuum lab test chamber</span>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-plots-name" contenteditable="false">Reference Measurement</div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-plot" contenteditable="false">
+                        <div id="resultChartContainer_reference" style="width: 100%;">
+                            <!-- Сюда будет вставляться захваченное изображение -->
+                        </div>
+                    </div>
+
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-2-text-data" contenteditable="false">Date:</div>
+                        <div class="pdf-2-name-data" contenteditable="true" id="data-final-1"></div>
+                        <div class="pdf-2-text-pressure" contenteditable="false">Final pressure:</div>
+                        <div class="pdf-2-name-pressure" contenteditable="true" id=""></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-plots-name" contenteditable="false">Sample Measurement</div>
+                        <div class="pdf-text-sample-plot" contenteditable="true"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-plot" contenteditable="false">
+                        <div id="resultChartContainer_sample" style="width: 100%;"></div>
+                    </div>
+
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-2-text-data" contenteditable="false">Date:</div>
+                        <div class="pdf-2-name-data" contenteditable="true" id="data-final-2"></div>
+                        <div class="pdf-2-text-pressure" contenteditable="false">Final pressure:</div>
+                        <div class="pdf-2-name-pressure" contenteditable="true" id=""></div>
+                    </div>
+                </div>
+                <!-- Здесь можно добавить содержимое для второго контейнера -->
+            </div>
+            <div class="pdf-container" id = "end-file-3">
+                <div class="pdf-header">
+                    <div class="pdf-logo-cont">
+                        <img class="pdf-logo" src="Logo_XFEL_positiv_.jpg" alt="Пример картинки">
+                        <div class="pdf-text-logo">VACUUM GROUP</div>
+                    </div>
+                    <div class="pdf-text-header-big" contenteditable="true">
+                        Residual Gas Analysis Results
+                        <br>
+                        <span class="pdf-text-header-small" contenteditable="true">for RGA qualifications in the vacuum lab test chamber</span>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-text-plots-name" contenteditable="false">Summary</div>
+                    </div>
+                </div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-plot" contenteditable="false">
+                        <div id="resultChartContainer_summary" style="width: 100%;"></div>
+                    </div>
+
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">Water peak:</div>
+                        <div class="pdf-summary-date" contenteditable="true" id="water-peak"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">All masses < 45 are below 1/100 of water:</div>
+                        <div class="pdf-summary-date" contenteditable="true" id="water_1">yes</div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">All other masses are below 1/1000 of water</div>
+                        <div class="pdf-summary-date" contenteditable="true" id="water_2">yes</div>
+                    </div>
+                </div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">Sum of all scanned masses:</div>
+                        <div class="pdf-summary-date" contenteditable="true" id = "sum_of_all_scan"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">Sum of masses > 44:</div>
+                        <div class="pdf-summary-date" contenteditable="true" id = "sum_of_44"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false">Contribution of masses > 44 to total:</div>
+                        <div class="pdf-summary-date" contenteditable="true" id = "contribution_of_44"></div>
+                    </div>
+                </div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false"></div>
+                    <div class="pdf-summary-big" contenteditable="false">
+                        <div class="pdf-summary-name" contenteditable="false" style="color: red; font-size: 14px; font-weight: bold;">Cleared for XFEL UHV systems:</div>
+                        <div class="pdf-summary-date" contenteditable="true">yes*</div>
+                    </div>
+                </div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info">
+                    <div class="pdf-text-name" contenteditable="false" style="margin-left: 60px;"></div>
+                    <div class="pdf-text-sample-box" contenteditable="false">
+                        <div class="pdf-2-text-data" contenteditable="false" style="padding-top: 20px; ">Date:</div>
+                        <div class="pdf-2-name-data" contenteditable="true" style="margin-top: 15px; " id="data-final-4"></div>
+                        <div class="pdf-2-text-pressure" contenteditable="false" style="padding-top: 15px; ">Signature:</div>
+                        <div class="pdf-2-name-pressure" contenteditable="true" style="height: 50px; width: 170px;">F. Meyn</div>
+                    </div>
+                </div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info"></div>
+                <div class="pdf-info"></div>
+                <!-- Здесь можно добавить содержимое для третьего контейнера -->
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+    let data1 = [];
+    let data3 = [];
+    let filestatus = []
+    
+    function showTab(tabNumber) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+        document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+        
+        document.getElementById('tab' + tabNumber).style.display = 'block';
+        document.querySelector('.tab-button:nth-of-type(' + tabNumber + ')').classList.add('active');
+        
+        // Обновляем таблицу, если файл загружен
+        const type_file = document.querySelector('.choise-of-the-quelle' + '[data-tab-number="' +tabNumber + '"]');
+        if (document.getElementById('fileInput' + tabNumber).files[0]) {
+            if (type_file.getAttribute('value') === "Karabo") {
+                    processFile2(document.getElementById('fileInput' + tabNumber).files[0], 'dataTable' + tabNumber, 'summaryTable' + tabNumber, tabNumber);
+                } else {
+                    processFile1(document.getElementById('fileInput' + tabNumber).files[0], 'dataTable' + tabNumber, 'summaryTable' + tabNumber, tabNumber);
+                }
+        }
+    }
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function(event) {
+            const tabNumber = event.target.getAttribute('data-tab-number'); // Получаем номер вкладки из data-атрибута
+            const file = event.target.files[0];
+            if (file) {
+                filestatus.push("changed" + tabNumber);
+                const type_file = document.querySelector('.choise-of-the-quelle' + '[data-tab-number="' +tabNumber + '"]');
+                console.log(type_file.getAttribute('value'))
+                // Вызов функции обработки файла
+                if (type_file.getAttribute('value') === "Karabo") {
+                    processFile2(file, 'dataTable' + tabNumber, 'summaryTable' + tabNumber, tabNumber, filestatus);
+                } else {
+                    processFile1(file, 'dataTable' + tabNumber, 'summaryTable' + tabNumber, tabNumber, filestatus);
+                }
+            }
+        });
+    });
+    function initializeButtons() {
+    // Get all buttons with the class 'choise-of-the-quelle'
+        const buttons = document.querySelectorAll('.choise-of-the-quelle');
+        console.log ('initialization')
+        buttons.forEach((button) => {
+            let isKarabo = true; // Variable to track the current state of the button
+
+            button.addEventListener('click', (event) => {
+                // Get the tab number from the button's data attribute
+                const tabNumber = button.getAttribute('data-tab-number');
+
+                // Select the file input corresponding to the tab number
+                const inputFile = document.querySelector(`input[type="file"][data-tab-number="${tabNumber}"]`);
+                const file = inputFile ? inputFile.files[0] : null; // Get the file if available
+
+                // Toggle the button text and process the file based on the state
+                if (isKarabo) {
+                    button.value = 'Software'; // Set button text to 'Software'
+                    button.textContent = 'Software'; // Set button text to 'Karabo'
+                    if (file) {
+                        processFile1(file, `dataTable${tabNumber}`, `summaryTable${tabNumber}`, tabNumber, filestatus);
+                    }
+                } else {
+                    button.value = 'Karabo'; // Set button text to 'Karabo'
+                    button.textContent = 'Karabo'; // Set button text to 'Karabo'
+                    if (file) {
+                        processFile2(file, `dataTable${tabNumber}`, `summaryTable${tabNumber}`, tabNumber, filestatus);
+                    }
+                }
+
+                // Toggle the state for the next click
+                isKarabo = !isKarabo;
+            });
+        });
+    }
+
+// Call the initialization function after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', initializeButtons);
+    function processFile2(file, dataTableId, summaryTableId, tabNumber, filestatus) {
+        if (!file) {
+            alert('Choose the file');
+            return;
+        }
+        console.log ('process file2')
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const lines = e.target.result.trim().split('\n');
+            const dataTable = document.getElementById(dataTableId);
+            const summaryTable = document.getElementById(summaryTableId);
+            dataTable.innerHTML = '';
+            summaryTable.innerHTML = '';
+
+            const numLabels = 100; // Установлено постоянное значение 100
+
+            // Заголовок таблицы данных
+            const dataHeaderRow = document.createElement('tr');
+            const dataFirstCell = document.createElement('th');
+            dataFirstCell.textContent = 'Индекс';
+            dataHeaderRow.appendChild(dataFirstCell);
+            for (let i = 1; i <= numLabels; i++) {
+                const th = document.createElement('th');
+                th.textContent = i; // Номера измерений в обычном формате
+                dataHeaderRow.appendChild(th);
+            }
+            dataTable.appendChild(dataHeaderRow);
+
+            // Заголовок таблицы резюме
+            const summaryHeaderRow = document.createElement('tr');
+            summaryHeaderRow.innerHTML = '<th>Sum</th><th>Sum>44</th><th>Ratio</th>';
+            summaryTable.appendChild(summaryHeaderRow);
+            const data = [];
+            let previousRow = Array(numLabels + 1).fill(0);
+
+            // Обработка строк из файла
+            lines.forEach((line, index) => {
+                // Пропускаем строки с заголовками
+                if (index === 0) return; 
+                const values = line.trim().split(/,/); // Разделение по запятой
+                if (values.length < 2) return; // Пропускаем строки с недостаточным количеством значений
+
+                const row = [index]; // Записываем индекс строки
+
+                for (let i = 2; i < values.length; i++) {
+                    let cellValue = values[i].trim(); // Удаляем пробелы
+                    let value;
+
+                    if (cellValue === 'Skipped') {
+                        value = previousRow[i] || 0; // Если пропущено, используем предыдущее значеcние
+                    } else {
+                        value = parseFloat(cellValue.replace(',', '.'));
+                        value = isNaN(value) ? 0 : value; // Обработка на случай NaN
+                    }
+                    row.push(value);
+                }
+
+                previousRow = row.slice(); // Копируем текущую строку
+                data.push(row);
+            });
+
+            // Сохраняем данные для дальнейшего использования
+            if (tabNumber === 1) {
+                data1 = data;
+            } else if (tabNumber === 3) {
+                data3 = data;
+            }
+
+            // Заменяем отрицательные значения на ноль для определенных вкладок
+            if (typeof tabNumber === 'string') {
+                tabNumber = parseInt(tabNumber); // Преобразуем строку в число
+            }
+            console.log('tabNumber', tabNumber, typeof tabNumber);
+
+            // Заменяем отрицательные значения на ноль для определенных вкладок
+            if (tabNumber === 2 || tabNumber === 4) {
+                data.forEach(row => {
+                    for (let i = 1; i < row.length; i++) {
+                        if (row[i] < 0) {
+                            row[i] = 0;
+                        }
+                    }
+                });
+                console.log('process file2 clean 2');
+            }
+            console.log (filestatus)
+            displayData(dataTableId, data, tabNumber, filestatus);
+            updateSummaryTable(summaryTableId, data, tabNumber);
+            updateAverages(dataTableId, data, tabNumber);
+        };
+
+        reader.readAsText(file);
+    }
+
+    function processFile1(file, dataTableId, summaryTableId, tabNumber, filestatus) {
+        if (!file) {
+            alert('Choose the file');
+            return;
+        }
+        console.log ('process file1')
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const lines = e.target.result.trim().split('\n');
+            const dataTable = document.getElementById(dataTableId);
+            const summaryTable = document.getElementById(summaryTableId);
+            dataTable.innerHTML = '';
+            summaryTable.innerHTML = '';
+
+            const numLabels = 100; // Установлено постоянное значение 100
+
+            // Заголовок таблицы данных
+            const dataHeaderRow = document.createElement('tr');
+            const dataFirstCell = document.createElement('th');
+            dataFirstCell.textContent = '№';
+            dataHeaderRow.appendChild(dataFirstCell);
+
+            for (let i = 1; i <= numLabels; i++) {
+                const th = document.createElement('th');
+                th.textContent = i; // Номера измерений в обычном формате
+                dataHeaderRow.appendChild(th);
+            }
+            dataTable.appendChild(dataHeaderRow);
+
+            // Заголовок таблицы резюме
+            const summaryHeaderRow = document.createElement('tr');
+            summaryHeaderRow.innerHTML = '<th>Sum</th><th>Sum>44</th><th>Ratio</th>';
+            summaryTable.appendChild(summaryHeaderRow);
+
+            const data = [];
+            let previousRow = Array(numLabels + 1).fill(0);
+
+            // Обработка строк из файла
+            lines.forEach((line) => {
+                const values = line.trim().split(/\s+/);
+                if (values.length <= numLabels) return; // Пропускаем строки с недостаточным количеством значений
+                const measurementNumber = parseInt(values[0], 10);
+                const row = [measurementNumber];
+
+                for (let i = 1; i <= numLabels; i++) {
+                    const cellValue = values[i];
+                    let value;
+                    if (cellValue === 'Skipped') {
+                        value = previousRow[i];
+                    } else {
+                        value = parseFloat(cellValue.replace(',', '.'));
+                        value = isNaN(value) ? 0 : value; // Обработка на случай NaN
+                    }
+                    row.push(value);
+                }
+
+                previousRow = row.slice(); // Копируем текущую строку
+                data.push(row);
+            });
+            let tabNumber1 = String.valueOf(tabNumber)
+            // Сохраняем данные для дальнейшего использования
+            if (tabNumber === 1) {
+                data1 = data;
+            } else if (tabNumber === 3) {
+                data3 = data;
+            }
+            if (typeof tabNumber === 'string') {
+                tabNumber = parseInt(tabNumber); // Преобразуем строку в число
+            }
+            console.log('tabNumber', tabNumber, typeof tabNumber);
+
+            // Заменяем отрицательные значения на ноль для определенных вкладок
+            if (tabNumber === 2 || tabNumber === 4) {
+                data.forEach(row => {
+                    for (let i = 1; i < row.length; i++) {
+                        if (row[i] < 0) {
+                            row[i] = 0;
+                        }
+                    }
+                });
+                console.log('process file1 clean 0');
+            }
+            console.log (data[0][5])
+            displayData(dataTableId, data, tabNumber, filestatus);
+            updateSummaryTable(summaryTableId, data, tabNumber);
+            updateAverages(dataTableId, data, tabNumber);
+        };
+
+        reader.readAsText(file);
+    }
+
+    function displayData(tableId, data, tabNumber,filestatus) {
+        console.log ('display data')
+        let startInterval = 0;
+        let endInterval = 100;
+        if (!Array.isArray(filestatus)) {
+            filestatus = []; // Инициализируем как пустой массив, если не определён
+        }
+        if (filestatus.includes("changed" + tabNumber))  {
+            startInterval = data[0][0];
+            document.getElementById('startInterval' + tabNumber).value = data[0][0];
+
+            endInterval = data[data.length - 1][0]; 
+            document.getElementById('endInterval' + tabNumber).value = endInterval; 
+
+            // Убираем "changed" + tabNumber из filestatus
+            filestatus = filestatus.filter(item => item !== "changed" + tabNumber);
+            
+            // Если filestatus пустой, присваиваем ему пустой массив
+            
+        }
+        else {
+            // Если файл не был изменён, берём значения из input
+            startInterval = parseInt(document.getElementById('startInterval' + tabNumber).value, 10);
+            endInterval = parseInt(document.getElementById('endInterval' + tabNumber).value, 10);
+        }
+
+        const table = document.getElementById(tableId);
+        table.innerHTML = '';
+
+        const numLabels = 100; // Установлено постоянное значение 100
+
+        // Заголовок таблицы данных
+        const headerRow = document.createElement('tr');
+        const firstCell = document.createElement('th');
+        firstCell.textContent = '№';
+        headerRow.appendChild(firstCell);
+
+        for (let i = 1; i <= numLabels; i++) {
+            const th = document.createElement('th');
+            th.textContent = i; // Номера измерений в обычном формате
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Фильтрация и отображение данных
+        data.forEach(row => {
+            const measurementNumber = row[0];
+            if (measurementNumber >= startInterval && measurementNumber <= endInterval) {
+                const tr = document.createElement('tr');
+                row.forEach((cell, index) => {
+                    const td = document.createElement('td');
+                    td.textContent = index === 0 ? cell : cell.toExponential(4); // Форматирование номера измерения и остальных значений
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            }
+        });
+
+        // Обновляем средние значения для выбранного диапазона
+        updateAverages(tableId, data, tabNumber);
+    }
+
+    function updateSummaryTable(summaryTableId, data, tabNumber) {
+        const summaryTable = document.getElementById(summaryTableId);
+        const startInterval = parseInt(document.getElementById('startInterval' + tabNumber).value, 10);
+        const endInterval = parseInt(document.getElementById('endInterval' + tabNumber).value, 10);
+
+
+    // Фильтрация данных по промежутку
+        const filteredData = data.filter(row => row[0] >= startInterval && row[0] <= endInterval);
+        console.log ('update summary')
+        filteredData.forEach(row => {
+            const tr = document.createElement('tr');
+        
+            const sum = row.slice(1).reduce((acc, val) => acc + val, 0);
+            const sumGreaterThan44 = row.slice(45).reduce((acc, val) => acc + val, 0);
+            const ratio = sum > 0 ? sumGreaterThan44 / sum : 0;
+
+            const sumTd = document.createElement('td');
+            sumTd.textContent = sum.toExponential(4); // Форматирование в экспоненциальном формате
+            tr.appendChild(sumTd);
+
+            const sumGreaterThan44Td = document.createElement('td');
+            sumGreaterThan44Td.textContent = sumGreaterThan44.toExponential(4); // Форматирование в экспоненциальном формате
+            tr.appendChild(sumGreaterThan44Td);
+
+            const ratioTd = document.createElement('td');
+            ratioTd.textContent = ratio.toExponential(4); // Форматирование в экспоненциальном формате
+            tr.appendChild(ratioTd);
+
+            summaryTable.appendChild(tr);
+        });
+
+    // Добавляем новую строку со средними значениями
+        const avgRow = document.createElement('tr');
+        avgRow.classList.add('gray-row'); // Добавляем класс серой строки
+
+        let sumSum = 0, sumSumGreaterThan44 = 0, sumRatio = 0;
+        let count = filteredData.length;
+
+        filteredData.forEach(row => {
+            const sum = row.slice(1).reduce((acc, val) => acc + val, 0);
+            const sumGreaterThan44 = row.slice(45).reduce((acc, val) => acc + val, 0);
+            const ratio = sum > 0 ? sumGreaterThan44 / sum : 0;
+
+            sumSum += sum;
+            sumSumGreaterThan44 += sumGreaterThan44;
+            sumRatio += ratio;
+        });
+
+        const avgSum = count > 0 ? sumSum / count : 0;
+        const avgSumGreaterThan44 = count > 0 ? sumSumGreaterThan44 / count : 0;
+        const avgRatio = count > 0 ? sumRatio / count : 0;
+
+        const avgSumTd = document.createElement('td');
+        avgSumTd.textContent = avgSum.toExponential(4);
+        avgRow.appendChild(avgSumTd);
+
+        const avgSumGreaterThan44Td = document.createElement('td');
+        avgSumGreaterThan44Td.textContent = avgSumGreaterThan44.toExponential(4);
+        avgRow.appendChild(avgSumGreaterThan44Td);
+
+        const avgRatioTd = document.createElement('td');
+        avgRatioTd.textContent = avgRatio.toExponential(4);
+        avgRow.appendChild(avgRatioTd);
+
+        summaryTable.appendChild(avgRow);
+    }
+
+    function updateAverages(tableId, data, tabNumber) {
+        const numLabels = 100;
+        const startInterval = parseInt(document.getElementById('startInterval' + tabNumber).value, 10);
+        const endInterval = parseInt(document.getElementById('endInterval' + tabNumber).value, 10);
+
+        const table = document.getElementById(tableId);
+
+        // Удаляем старые строки сравнения
+        document.querySelectorAll(`#${tableId} .compare-row`).forEach(row => row.remove());
+        console.log ('update avarege', tableId) 
+        // Обработка строки с средним значением
+        let avgRow = document.querySelector(`#${tableId} .average-row`);
+        if (!avgRow) {
+            avgRow = document.createElement('tr');
+            avgRow.classList.add('average-row', 'gray-row');
+            table.appendChild(avgRow);
+        } else {
+            avgRow.innerHTML = ''; // Очищаем содержимое перед обновлением
+        }
+
+        // Первая ячейка для строки с заголовком "Average"
+        const avgFirstCell = document.createElement('td');
+        avgFirstCell.textContent = 'Average';
+        avgRow.appendChild(avgFirstCell);
+
+        // Рассчитываем средние значения
+        const averages = [];
+        for (let i = 1; i <= numLabels; i++) {
+            let sum = 0, count = 0;
+            data.forEach(row => {
+                const measurementNumber = row[0];
+                if (measurementNumber >= startInterval && measurementNumber <= endInterval) {
+                    const value = row[i];
+                    if (!isNaN(value)) {
+                        sum += value;
+                        count++;
+                    }
+                }
+            });
+            const avg = count > 0 ? sum / count : 0;
+            averages.push(avg);
+
+            // Добавляем ячейку среднего значения
+            const avgTd = document.createElement('td');
+            avgTd.textContent = avg.toExponential(4);
+            avgRow.appendChild(avgTd);
+        }
+
+        // Значение для сравнения с 18-м элементом (индекс 17)
+        const avgValue18 = averages[17];
+
+        // Создание строк для сравнения
+        const compareRow1 = createCompareRow('> 0.01 of 18', averages, avgValue18, 0.01, 1, 44); // Проверка от 1 до 44
+        const compareRow2 = createCompareRow('> 0.001 of 18', averages, avgValue18, 0.001, 45, numLabels); // Проверка от 45 до последнего элемента
+
+        // Добавляем строки в таблицу
+        table.appendChild(compareRow1);
+        table.appendChild(compareRow2);
+
+        // Обновляем подсветку ячеек
+        highlightCellsInRange(tableId, startInterval, endInterval);
+        if (tabNumber === 4) {
+            let foundRed1 = false;
+            let foundRed2 = false;
+
+            // Проверка для compareRow1
+            compareRow1.querySelectorAll('td').forEach(td => {
+                if (td.style.backgroundColor === 'rgb(243, 105, 105)') {  // rgb(243, 105, 105) — это #f36969 в формате rgb
+                    document.getElementById('water_1').innerText = "no";
+                }
+            });
+
+            // Проверка для compareRow2
+            compareRow2.querySelectorAll('td').forEach(td => {
+                if (td.style.backgroundColor === 'rgb(243, 105, 105)') {  // rgb(243, 105, 105) — это #f36969 в формате rgb
+                    document.getElementById('water_2').innerText = "no";
+                }
+            });
+        }
+    }
+
+    function createCompareRow(label, averages, baseValue, multiplier, start, end) {
+        const compareRow = document.createElement('tr');
+        compareRow.classList.add('compare-row');
+
+        const compareLabelCell = document.createElement('td');
+        compareLabelCell.textContent = label;
+        compareRow.appendChild(compareLabelCell);
+        console.log ('update compare')
+        // Сравнение ячеек только в указанном диапазоне
+        for (let i = 1; i <= averages.length; i++) { // Используем <= для включения последнего элемента
+            const compareTd = document.createElement('td');
+            if (i >= start && i <= end) {
+                const compareValue = averages[i - 1]; // Приводим i к индексу массива (i-1)
+                compareTd.style.backgroundColor = compareValue > multiplier * baseValue ? '#f36969' : '#9ee3a3'; // Красный или зелёный цвет
+            } else {
+                compareTd.style.backgroundColor = '#A9A9A9'; // Серый цвет для остальных ячеек
+            }
+            compareRow.appendChild(compareTd);
+        }
+
+        return compareRow;
+    }
+
+    function highlightCellsInRange(tableId, startInterval, endInterval) {
+        document.querySelectorAll(`#${tableId} tr`).forEach(tr => {
+            const cells = tr.getElementsByTagName('td');
+            for (let i = 1; i < cells.length; i++) {
+                const cell = cells[i];
+                const measurementNumber = parseInt(tr.cells[0].textContent, 10);
+                if (measurementNumber >= startInterval && measurementNumber <= endInterval) {
+                    cell.classList.add('highlight');
+                } else {
+                    cell.classList.remove('highlight');
+                }
+            }
+        });
+    }
+
+    let myChart = null;
+    let datasets = {}; // Храним наборы данных для графика
+    let datasetList = {};
+    const datasetColors = {};
+    const datasetStack = {};
+    let annotations = []; // Храним аннотации для фиксированных точек
+    const colors = [
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.6)',
+        'rgba(153, 102, 255, 0.6)',
+        'rgba(255, 205, 86, 0.6)',
+        'rgba(54, 162, 235, 0.6)',
+        'rgba(201, 203, 207, 0.6)'
+    ];
+
+    function getDataFromTable(tableId, label) {
+        const table = document.getElementById(tableId);
+
+    // Извлекаем первую строку как labels
+        const labels = [];
+        for (let i = 1; i < table.rows[0].cells.length; i++) {
+            labels.push(table.rows[0].cells[i].innerText.trim());
+        }
+
+    // Извлекаем вторую строку как data
+        const data = [];
+        for (let i = 1; i < table.rows[1].cells.length; i++) {
+            const cellValue = parseFloat(table.rows[1].cells[i].innerText.trim()); // Преобразуем в число
+            if (!isNaN(cellValue)) {
+                data.push(cellValue);
+            } else {
+                console.error('One of the values is not correct:', table.rows[1].cells[i].innerText);
+            }
+        }
+
+        return { labels, data };
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        function updateChart() {
+            if (myChart) {
+                myChart.destroy();
+            }
+            const canvas = document.getElementById('myChart');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const yMinInput = document.getElementById('yMin');
+            const yMaxInput = document.getElementById('yMax');
+            const yMinValue = parseFloat(yMinInput.value);
+            const yMaxValue = parseFloat(yMaxInput.value);
+
+            myChart = new Chart(ctx, {
+                data: {
+                    labels: Object.keys(datasets).length > 0 ? Object.values(datasets)[0].labels : [],
+                    datasets: Object.values(datasets).map((ds, index) => {
+                        let stackGroupX = 'StackGroupX1';
+                        let yAxisID = 'y';
+                        let color_1 = ds.backgroundColor || 'rgba(0, 0, 0, 0.1)';
+                        let order = 1;
+                        let op = 45;
+                        // Устанавливаем группы для стэка и оси Y
+                        if (ds.staks === 'Calculated Reference measurement') {
+                            yAxisID = 'y2';
+                            order = 2;
+                            stackGroupX = 'StackGroupX1';
+                        } else if (ds.staks === 'Calculated Sample measurement') {
+                            yAxisID = 'y2';
+                            order = 2;
+                            stackGroupX = 'StackGroupX2';
+                        } else if (ds.label === 'Reference measurement') {
+                            color_1 = document.getElementById("colorPicker_reference_bar").value || "rgba(75, 192, 192, 0.4)";
+                            op = document.getElementById("opacityInput_reference_bar").value/100;
+                            
+                            stackGroupX = 'StackGroupX1';
+                        } else if (ds.label === 'Sample measurement') {
+                            color_1 = document.getElementById("colorPicker_sample_bar").value || 'rgba(255, 99, 132, 0.3)';
+                            stackGroupX = 'StackGroupX2';
+                            op = document.getElementById("opacityInput_reference_bar").value/100;
+                        } else if (ds.label === 'Reference measurment line') {
+                            color_1 = "white";
+
+                        }
+
+                        if (ds.colorCode === 'yes') {
+                            color_1 = ds.backgroundColor;
+                        }
+
+                        function setOpacity(color, alpha) {
+                            // Проверяем, является ли цвет в формате rgba
+                            if (color.startsWith("rgba")) {
+                                // Изменяем альфа-канал
+                                return color.replace(/rgba\((\d+), (\d+), (\d+), ([^)]+)\)/, `rgba($1, $2, $3, ${alpha})`);
+                            }
+                            // Если цвет не rgba, преобразуем его в rgba и устанавливаем прозрачность
+                            return convertHexToRgba(color, alpha);
+                        }
+                        
+                        color_1 = setOpacity(color_1, op); // Устанавливаем новую прозрачность 0.7
+
+                        function convertHexToRgba(hex, alpha) {
+                            let r = parseInt(hex.slice(1, 3), 16);
+                            let g = parseInt(hex.slice(3, 5), 16);
+                            let b = parseInt(hex.slice(5, 7), 16);
+                            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                        }
+
+                        // Определяем тип графика для каждого набора данных
+                        const chartType = ds.type || 'bar'; // 'line' или 'bar'
+                        return {
+                            type: chartType,  // Устанавливаем тип для каждого набора данных
+                            label: ds.label,
+                            data: ds.data,
+                            backgroundColor: ds.backgroundColor || color_1,
+                            borderColor: ds.borderColor || color_1,
+                            borderWidth: chartType === 'line' ? 2 : 0,  // Ширина линии
+                            stack: stackGroupX,
+                            order: order,
+                            yAxisID: yAxisID,
+                            fill: chartType === 'line' ? false : true, // Если это линейный график, отключаем заливку
+                            spanGaps: true,  // Соединяем точки, даже если есть пропуски
+                            showLine: chartType === 'line' ? true : false,  // Линии между точками
+                            pointRadius: chartType === 'line' ? 0 : 0, // Показываем точки только для линий
+                            barPercentage: 0.9,      // Ширина столбцов внутри группы (от 0 до 1, 0.9 - широкие столбцы)
+                            categoryPercentage: 1.0, // Полное использование доступного пространства для столбцов
+                            maxBarThickness: 90,
+                        
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    return tooltipItem.dataset.label + ': ' + (value ? value.toExponential(4) : 'Н/Д');
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                position: 'right', // Легенда будет отображаться справа
+                                align: 'start', // Выравнивание по верхнему краю
+                                font: {
+                                    size: 14, // Размер шрифта для подписей
+                                    weight: 'bold' // Жирность шрифта для подписей
+                                },
+                                color: 'black' // Цвет подписей (например, черный)
+                            }
+                        },
+                        annotation: {
+                            annotations: annotations
+                        }
+                    },
+                    onClick: (evt, elements) => {
+                        if (elements.length) {
+                            const element = elements[0];
+                            const datasetIndex = element.datasetIndex;
+                            const index = element.index;
+                            const value = myChart.data.datasets[datasetIndex].data[index];
+                            const label = myChart.data.labels[index];
+                            const values = myChart.data.datasets.map(ds => ds.data[index]);
+
+                            //addAnnotation(label, values, index);
+                            //updateChart();
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            barPercentage: 1.0,
+                            categoryPercentage: 1.0,
+                            min: xMin,
+                            max: xMax,
+                            title: {
+                                display: true, // Отображение заголовка оси
+                                text: 'Mass point', // Текст заголовка
+                                color: 'black', // Цвет текста заголовка
+                                font: {
+                                    size: 14, // Размер шрифта заголовка
+                                    weight: 'bold' // Жирность шрифта заголовка
+                                }
+                            },
+                            ticks: {
+                                color: "black",
+                                font: {
+                                    size: 12, // Размер шрифта 14 (можно изменить на любое значение)
+                                    weight: "bold",
+
+                                },
+                            },
+
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            beginAtZero: true,
+                            stacked: false,
+                            min: yMinValue,
+                            max: yMaxValue,
+                            ticks: {
+                                color: "black",
+                                font: {
+                                    size: 14, // Размер шрифта 14 (можно изменить на любое значение)
+                                    weight: "bold",
+
+                                },
+                                callback: function (value) {
+                                    // Проверяем, является ли логарифм по основанию 10 целым числом
+                                    if (Number.isInteger(Math.log10(value))) {
+                                        return Number(value.toString());
+                                    }
+                                    return null; // Не отображаем метки для других значений
+                                }
+                            },
+                            title: {
+                                display: true, // Отображение заголовка оси
+                                text: 'Pressure in mbar', // Текст заголовка
+                                color: 'black', // Цвет текста заголовка
+                                font: {
+                                    size: 14, // Размер шрифта заголовка
+                                    weight: 'bold' // Жирность шрифта заголовка
+                                }
+                            }
+                        },
+                        y2: {
+                            type: 'logarithmic',
+                            beginAtZero: true,
+                            stacked: true,
+                            position: 'right',
+                            min: yMinValue,
+                            max: yMaxValue,
+                            ticks: {
+                                color: "black",
+                                font: {
+                                    size: 14, // Размер шрифта 14 (можно изменить на любое значение)
+                                    weight: "bold",
+
+                                },
+                                callback: function (value) {
+                                    // Проверяем, является ли логарифм по основанию 10 целым числом
+                                    if (Number.isInteger(Math.log10(value))) {
+                                        return Number(value.toString());
+                                    }
+                                    return null; // Не отображаем метки для других значений
+                                }
+                            },
+                            title: {
+                                display: true, // Отображение заголовка оси
+                                text: 'Pressure in mbar', // Текст заголовка
+                                color: 'black', // Цвет текста заголовка
+                                font: {
+                                    size: 14, // Размер шрифта заголовка
+                                    weight: 'bold' // Жирность шрифта заголовка
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            document.getElementById('clearHistograms').addEventListener('click', function() {
+                // Очищаем данные и обновляем график
+
+
+                // Функция для удаления класса у кнопок
+                function removeClassFromButtons(className) {
+                    const buttons = document.querySelectorAll(className);
+                    buttons.forEach(button => {
+                        button.classList.remove(className.substring(1)); // Убираем точку из имени класса
+                    });
+                }
+
+                // Удаляем классы из кнопок
+                removeClassFromButtons('.button-add-comparison');
+                removeClassFromButtons('.button-add-data');
+                removeClassFromButtons('.button-add-reference');
+
+                // Находим все кнопки с ID, начинающимся на "addCalculatedHistogramsButton_"
+                const squareButtons = document.querySelectorAll('button[class^="square-button-"]');
+                squareButtons.forEach(button => {
+                    const classes = Array.from(button.classList);
+                    classes.forEach(className => {
+                        if (className.startsWith('square-button-')) {
+                            button.classList.remove(className); // Удаляем класс
+                            button.classList.add('square-button-active')
+                        }
+                    });
+                    button.style.backgroundColor = ''; // Сбрасываем цвет кнопки
+                });
+                datasets = [];
+                datasetList = {};
+                updateChart();
+            });
+
+ 
+
+        }
+
+     
+    // Функция для добавления аннотации на график
+        function addAnnotation(label, values, index) {
+            const existingAnnotation = annotations.find(ann => ann.value === label);
+            if (!existingAnnotation) {
+        // Определяем смещение в шахматном порядке
+                const yOffset = (annotations.length % 2 === 0) ? -150 : -110;
+                const columnColor = colors[index % values.length];
+                annotations.push({
+                    type: 'line',
+                    mode: 'vertical',
+                    scaleID: 'x',
+                    value: label,  // Добавляем метку по оси X
+                    borderColor: 'rgba(0, 0, 0, 0.3)', 
+                    borderWidth: 2,
+                    borderDash: [5, 5], // Пунктирная линия
+                    label: {
+                        content: `${label}:`,
+                        enabled: true,
+                        position: 'top',
+                        yAdjust: yOffset, // Смещение по вертикали
+                        backgroundColor: 'black',
+                        borderColor: "black",  // Цвет колонки
+                        borderWidth: 1,                 
+                        font: {
+                            size: 13,
+                            family: 'Arial',
+                            weight: 'bold',                        
+                        }
+                    }
+                });
+
+                annotations.push({
+                    type: 'line',
+                    mode: 'vertical',
+                    scaleID: 'x',
+                    value: label,  // Добавляем метку по оси X
+                    label: {
+                        content: `${values[0]} mbar`,
+                        enabled: true,
+                        position: 'top',
+                        yAdjust: yOffset + 29, // Смещение по вертикали
+                        backgroundColor: colors[0],
+                        borderColor: "black",  // Цвет аннотации из столбца
+                        borderWidth: 1,
+                        color: 'black',
+                        font: {
+                            size: 13,
+                            family: 'Arial',
+                            weight: 'bold',
+                            color: 'black',
+                        }
+                    }
+                });
+
+                if (values.length > 1) {
+                    annotations.push({
+                        type: 'line',
+                        mode: 'vertical',
+                        scaleID: 'x',
+                        value: label,  // Добавляем метку по оси X
+                        label: {
+                            content: `${values[1]} mbar`,
+                            enabled: true,
+                            position: 'top',
+                            yAdjust: yOffset +59, // Смещение по вертикали
+                            backgroundColor: colors[1],
+                            borderColor: 'black',  // Цвет аннотации из столбца
+                            borderWidth: 1,
+                            color: 'black',
+                            font: {
+                                size: 13,
+                                family: 'Arial',
+                                weight: 'bold',
+                                color: 'black',
+                            }
+                        }
+                    });
+                }   
+            }
+        }   
+        let buttonActive = false; // Глобальный флаг для отслеживания состояния кнопки
+
+        function addArrays(arr1, arr2) {
+            return arr1.map((value, index) => value + arr2[index]);
+        }
+
+        function subtractArrays(arr1, arr2) {
+            return arr1.map((value, index) => value - arr2[index]);
+        }
+
+        function addCalculatedHistograms(chem, selectedColor) {
+    // Определяем ключи для "вычисленных" гистограмм
+            const greyDatasets = Object.keys(datasets).filter(label => label.startsWith('Calculated '));
+            const mainDatasets = Object.keys(datasets).filter(label => label.startsWith('Reference')||label.startsWith('Sample'));
+            const oldGreyPeaks1 = datasets["Calculated Reference measurement"]?.peaks|| datasets["Calculated Sample measurement"]?.peaks|| []
+            
+            if (((oldGreyPeaks1.length === 1)) && oldGreyPeaks1[0] === chem) {
+        // Если есть "вычисленные" гистограммы, удаляем их
+                greyDatasets.forEach(label => delete datasets[label]);
+                annotations = annotations.filter(ann => !ann.value.startsWith('Calculated ')); // Удаляем аннотации для "вычисленных" данных
+                updateChart();
+        // Сбрасываем флаг состояния кнопки, так как данные удалены
+                return 0;  // Возвращаем 0, если удалены существующие гистограммы
+            } else {
+                if (mainDatasets.length === 0) {
+                    return 0;
+                }
+        // Если нет, добавляем "вычисленные" гистограммы
+                const greyColor = 'rgba(128, 128, 128, 0.6)';  // Цвет новой гистограммы
+                let added = false;  // Флаг для отслеживания добавления новых данных
+                let info_peaks = []
+                Object.keys(datasets).forEach((label) => {
+                    if (!label.includes("Calculated") && !label.includes("Comparison") && !label.includes("line")) {
+                        const oldData = datasets[label].data;
+                        let oldGreyData = datasets[`Calculated ${label}`]?.data || Array(100).fill(0);
+                        const oldGreyPeaks = datasets[`Calculated ${label}`]?.peaks|| [];
+                        const newLabels = [];
+                        const newData = [];
+                        let newLABEL = label 
+                        let newPeaks = oldGreyPeaks
+                        let button_color = '#00BFFF';
+                        const mks_peaks = {
+                            "Hydrogen": [[2, 100], [1, 5]],
+                            "Helium": [[4, 100]],
+                            "Methane": [[16, 100], [15, 85], [14, 16], [13, 8], [1, 4]],
+                            "Ammonia": [[17, 100], [16, 80], [15, 8], [14, 2]],
+                            "Water": [[18, 100], [17, 25], [1, 6], [16, 2], [2, 2]],
+                            "Neon": [[20, 100], [22, 9]],
+                            "Acetylene": [[26, 100], [25, 20], [13, 5], [54, 5], [27, 3]],
+                            "Diborane": [[26, 100], [27, 96], [24, 95], [25, 57], [11, 40]],
+                            "VinylChloride": [[27, 100], [62, 88], [28, 36], [26, 33], [64, 27]],
+                            "Nitrogen": [[28, 100], [14, 7], [29, 1]],
+                            "CarbonMonoxide": [[28, 100], [16, 10], [12, 5], [29, 1]],
+                            "Ethylene": [[28, 100], [26, 61], [27, 59], [25, 12], [14, 8]],
+                            "Ethane": [[28, 100], [27, 33], [30, 26], [26, 23], [29, 21]],
+                            "Air": [[28, 100], [32, 27], [14, 6], [16, 3], [40, 1]],
+                            "Propane": [[29, 100], [28, 59], [27, 38], [44, 26], [43, 22]],
+                            "Acetaldehyde": [[29, 100], [44, 45], [43, 27], [42, 9], [26, 9]],
+                            "FormicAcid": [[29, 100], [46, 61], [45, 47], [17, 17], [28, 17]],
+                            "NitricAcid": [[30, 100], [14, 7], [15, 2], [16, 1]],
+                            "Silane": [[30, 100], [31, 80], [29, 31], [28, 28], [32, 8]],
+                            "NitrogenDioxide": [[30, 100], [46, 37], [16, 22], [14, 9]],
+                            "Methanol": [[31, 100], [32, 66], [29, 64], [28, 6], [18, 2]],
+                            "EthyleneGlycol": [[31, 100], [33, 28], [15, 18], [29, 17], [43, 7]],
+                            "Ethanol": [[31, 100], [45, 34], [27, 24], [29, 23], [46, 17]],
+                            "Oxygen": [[32, 100], [16, 11]],
+                            "HydrogenSulfide": [[34, 100], [32, 44], [33, 42], [36, 34], [35, 2]],
+                            "Argon": [[40, 100], [20, 10]],
+                            "Propene": [[41, 100], [39, 73], [42, 69], [27, 38], [40, 29]],
+                            "Acetone": [[43, 100], [15, 67], [28, 17], [14, 15], [58, 15]],
+                            "Butane": [[43, 100], [29, 44], [27, 37], [28, 32], [41, 27]],
+                            "MethylEthylKetone": [[43, 100], [29, 25], [72, 16], [27, 16], [57, 6]],
+                            "MPOil": [[43, 100], [41, 91], [57, 73], [55, 64], [71, 20]],
+                            "Acetic Acid": [[43, 100], [45, 93], [60, 57], [29, 15], [42, 1]],
+                            "TurbopumpOil": [[43, 100], [57, 88], [41, 76], [55, 73], [71, 52]],
+                            "CarbonDioxide": [[44, 100], [28, 11], [16, 9], [12, 6], [45, 1]],
+                            "NitrousOxide": [[44, 100], [30, 31], [14, 13], [28, 11], [16, 5]],
+                            "IsopropylAlcohol": [[45, 100], [43, 16], [27, 16], [29, 10], [41, 7]],
+                            "BoronTrifluoride": [[49, 100], [48, 28], [68, 5], [11, 5], [19, 3]],
+                            "DPOilPPE": [[50, 100], [77, 89], [63, 29], [62, 27], [64, 21]],
+                            "NitrogenTrifluoride": [[52, 100], [33, 40], [71, 31], [14, 9], [19, 8]],
+                            "Disilane": [[60, 100], [58, 82], [57, 48], [62, 42], [61, 40]],
+                            "Diphosphine": [[62, 100], [64, 70], [63, 59], [65, 26], [66, 2]],
+                            "SulfurDioxide": [[64, 100], [48, 49], [32, 10], [66, 5], [16, 5]],
+                            "Fomblin": [[69, 100], [20, 28], [16, 16], [31, 9], [97, 8]],
+                            "Trifluoromethane": [[69, 100], [51, 91], [31, 49], [50, 42], [12, 4]],
+                            "Tetrafluoromethane": [[69, 100], [50, 12], [19, 7], [31, 5]],
+                            "Freon13": [[69, 100], [85, 15], [50, 14], [31, 9], [35, 7]],
+                            "CarbonDisulfide": [[76, 100], [32, 21], [44, 17], [78, 9], [38, 6]],
+                            "Arsine": [[76, 100], [78, 60], [77, 21], [75, 4]],
+                            "Benzene": [[78, 100], [77, 22], [51, 18], [50, 17], [52, 15]],
+                            "DPOilDC705": [[78, 100], [76, 83], [39, 73], [43, 59], [91, 32]],
+                            "Krypton": [[84, 100], [86, 31], [83, 20], [82, 20], [80, 4]],
+                            "Freon12": [[85, 100], [87, 32], [50, 16], [35, 12]],
+                            "SiliconTetrafluoride": [[85, 100], [87, 12], [28, 12], [33, 10], [86, 5]],
+                            "Toluene": [[91, 100], [92, 69], [65, 16], [51, 10], [63, 9]],
+                            "Trichloroethylene": [[95, 100], [60, 65], [97, 64], [35, 40], [47, 26]],
+                            "Freon11": [[101, 100], [103, 60], [35, 16], [66, 15], [47, 12]],
+                            "Xenon": [[132, 100], [129, 98], [131, 79], [134, 39], [136, 33]]
+                        };
+            // Устанавливаем метки и значения для новой гистограммы
+                        const totalColumns = 100;  // Определяем общее количество столбцов
+                        let newDataArray = new Array(totalColumns).fill(0);
+                        if (mks_peaks[chem]) {
+                            elementData = mks_peaks[chem];
+                            const index_max = mks_peaks[chem][0][0]
+                            const max_peak = oldData[index_max-1] || 0;
+                            newLABEL = newLABEL + " + " + chem;  
+                            newDataArray[index_max-1] = max_peak; 
+                            button_color = selectedColor || '#00BFFF'; 
+
+            // Вставляем данные на соответствующие позиции
+                            elementData.slice(1).forEach(([column, percentage]) => {
+                                const colValue = max_peak || 0; 
+                                if (totalColumns > column) newDataArray[column - 1] = colValue * (percentage / 100);
+                            });
+            // Сопоставляем метки
+                            for (let i = 1; i <= totalColumns; i++) {
+                                newLabels.push(i.toString());
+                            }
+                            
+                        }           
+                        if (!datasetList[label]?.includes(chem)) {
+                            if (!Array.isArray(datasetList[label])) {
+                                datasetList[label] = [];  // Создаем массив, если он не существует
+                            }
+                            datasetList[label].push(chem);
+                            buttonActive = 1;
+                            // Добавляем новый набор данных
+                            datasets[`Calculated ${label} ${chem}`] = {
+                                labels: newLabels,
+                                data: newDataArray,
+                                label: `Peak for ${label}: ${chem}`,
+                                staks: `Calculated ${label}`,
+                                backgroundColor: button_color,
+                                borderColor: greyColor.replace('0.6', '1'),
+                                borderWidth: 0,
+                                peaks: newPeaks,
+                                colorCode: "yes",
+                                type: "bar",
+                                
+                            };
+                            info_peaks = datasets[`Calculated ${label}`]?.peaks;
+                        } else {
+                            const index = datasetList[label].indexOf(chem);
+                            if (index !== -1) {
+                                datasetList[label].splice(index, 1);  // Удаляем элемент
+                            }
+                            delete datasets[`Calculated ${label} ${chem}`];
+                            buttonActive = 0;
+                        }
+
+                    }
+                });
+
+                updateChart();
+        // Устанавливаем флаг состояния кнопки, так как данные добавлены
+                return buttonActive ;  // Возвращаем 1, если данные были добавлены, иначе 0
+            }
+        }
+        function handleButtonClick(button) {
+            
+
+            let p = 0; // Инициализируем p здесь, чтобы она была доступна позже
+            let colorPicker, element;
+
+            element = button.getAttribute('element');
+            const colorPickerId = `colorPicker_${element}`; // Получаем id цветового пикера, связанного с кнопкой
+            colorPicker = document.getElementById(colorPickerId).value; // Получаем выбранный цвет
+            p = addCalculatedHistograms(element, colorPicker); // Передаем цвет в функцию добавления гистограммы
+
+            // Сохраняем текущее состояние кнопки, если данные добавлены
+            if (p===1) {
+                button.classList.add(`square-button-${element}`); // Добавляем уникальный класс для кнопки
+                button.style.backgroundColor = colorPicker; // Меняем цвет кнопки на выбранный
+            } else {
+                button.classList.remove(`square-button-${element}`);
+                button.style.backgroundColor = ''; // Сбрасываем цвет кнопки
+            }
+        }
+
+        // Добавляем обработчики событий для всех кнопок
+        const buttons = document.querySelectorAll('[id^="addCalculatedHistogramsButton_"]'); // Находим все кнопки
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                handleButtonClick(this); // Вызываем общую функцию с текущей кнопкой
+            });
+        });
+
+        
+        let test = 0;
+        function toggleDataFromTable(tableId, label, chartType) {
+            if (datasets[label]) {
+                // Удаляем набор данных и его цвет
+                delete datasets[label];
+                delete datasetColors[label];
+                test = 0;
+            } else {
+                const { labels, data } = getDataFromTable(tableId, label);  // Получаем данные
+
+                // Логика для Vacuum test 1/100
+                if (label === "Vacuum test 1/100") {
+                    const data100 = new Array(data.length).fill(null);  // Создаем массив пустых данных
+                    const referenceValue = data[17];  // 18-й элемент (индекс 17)
+                    for (let i = 0; i < 45; i++) {
+                        data100[i] = referenceValue / 100;  // Значения от 1 до 45
+                    }
+                    datasets[label] = {
+                        data: data100,    // Данные для Vacuum test 1/100
+                        label: label,
+                        borderColor: document.getElementById('colorPicker_vacuum_100').value,  // Цвет линии
+                        showLine: true,    // Показывать линию для scatter
+                        fill: false,       // Отключить заполнение под кривой
+                        type: 'line',
+                        labels: labels,
+                        backgroundColor: "white",
+                    };
+                }
+                // Логика для Vacuum test 1/1000
+                else if (label === "Vacuum test 1/1000") {
+                    const data1000 = new Array(data.length).fill(null);  // Создаем массив пустых данных
+                    const referenceValue = data[17];  // 18-й элемент (индекс 17)
+                    for (let i = 44; i < data.length; i++) {
+                        data1000[i] = referenceValue / 1000;  // Значения от 45-го элемента
+                    }
+                    datasets[label] = {
+                        data: data1000,    // Данные для Vacuum test 1/1000
+                        label: label,
+                        borderColor: document.getElementById('colorPicker_vacuum_1000').value,  // Цвет линии
+                        showLine: true,    // Показывать линию для scatter
+                        fill: false,       // Отключить заполнение под кривой
+                        type: 'line',
+                        labels: labels,
+                        backgroundColor: "white",
+                    };
+                }
+                // Остальные случаи
+                else {
+                    if (chartType === 'scatter') {
+                        let color_plot = '';
+                        if (label == "Reference measurement line") {
+                            color_plot = document.getElementById('colorPicker_reference_line').value;
+                        }
+                        if (label == "Sample measurement line") {
+                            color_plot = document.getElementById('colorPicker_sample_line').value;
+                        }
+                        if (label == "Comparison line") {
+                            color_plot = document.getElementById('colorPicker_comparison_line').value;
+                        }
+
+                        datasets[label] = {
+                            data: data,         // Данные для scatter
+                            label: label,
+                            borderColor: color_plot,   // Цвет линии
+                            showLine: true,     // Показывать линию для scatter
+                            fill: false,        // Отключить заполнение под кривой
+                            type: 'line',
+                            labels: labels,
+                            backgroundColor: "white",
+                        };
+                    } else {
+                        let color = "";
+                        datasets[label] = { labels, data, label };
+                        if (label == "Reference measurement bar") {
+                            color = document.getElementById('colorPicker_reference_bar').value;
+                        }
+                        if (label == "Sample measurement bar") {
+                            color = document.getElementById('colorPicker_sample_bar').value;
+                        }
+                        if (label == "Comparison bar") {
+                            color = document.getElementById('colorPicker_comparison_bar').value;
+                        }
+                        datasetColors[label] = color;  // Назначаем цвет для других графиков
+                    }
+                }
+
+                test = 1;
+            }
+
+            updateChart();  // Обновляем график
+            return test;
+        }
+
+
+        document.getElementById('toggleChartFromTable5').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable5', 'Reference measurement',"bar");
+            if (p===1) {
+                this.classList.add('button-add-reference');
+            } else {
+                this.classList.remove('button-add-reference');
+            }
+        });
+
+        document.getElementById('toggleChartFromTable6').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable6', 'Sample measurement',"bar");
+            if (p===1) {
+                this.classList.add('button-add-data');
+            } else {
+                this.classList.remove('button-add-data');
+            }
+        });
+
+
+
+        document.getElementById('toggleChartFromTable7').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable7', 'Comparison', "bar");
+            if (p===1) {
+                this.classList.add('button-add-comparison');
+            } else {
+                this.classList.remove('button-add-comparison');
+            }
+        });
+
+        document.getElementById('toggleChartFromTable5-2').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable5', 'Reference measurement line','scatter');
+            if (p===1) {
+                this.classList.add('button-add-reference');
+            } else {
+                this.classList.remove('button-add-reference');
+            }
+        });
+
+        document.getElementById('toggleChartFromTable6-2').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable6', 'Sample measurement line','scatter');
+            if (p===1) {
+                this.classList.add('button-add-data');
+            } else {
+                this.classList.remove('button-add-data');
+            }
+        });
+
+        document.getElementById('toggleChartFromTable7-2').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable7', 'Comparison line', 'scatter');
+            if (p===1) {
+                this.classList.add('button-add-comparison');
+            } else {
+                this.classList.remove('button-add-comparison');
+            }
+        });
+        document.getElementById('vacuum_1000').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable6', 'Vacuum test 1/1000', 'scatter');
+            if (p===1) {
+                this.classList.add('button-add-vacuum-1000');
+            } else {
+                this.classList.remove('button-add-vacuum-1000');
+            }
+        });
+        document.getElementById('vacuum_100').addEventListener('click', function () {
+            p = toggleDataFromTable('dataTable6', 'Vacuum test 1/100', 'scatter');
+            if (p===1) {
+                this.classList.add('button-add-vacuum-100');
+            } else {
+                this.classList.remove('button-add-vacuum-100');
+            }
+        });
+
+        document.getElementById('yMin').addEventListener('input', function () {
+            yMin = parseFloat(this.value);
+            updateChart();
+        });
+
+        document.getElementById('yMax').addEventListener('input', function () {
+            yMax = parseFloat(this.value);
+            updateChart();
+        });
+        document.getElementById('xMin').addEventListener('input', function () {
+            xMin = parseFloat(this.value);
+            updateChart();
+        });
+
+        document.getElementById('xMax').addEventListener('input', function () {
+            xMax = parseFloat(this.value);
+            updateChart();
+        });
+
+        document.getElementById('myChart').addEventListener('contextmenu', function(event) {
+            event.preventDefault();  // Отключаем стандартное контекстное меню браузера
+
+    // Получаем элемент, на который кликнули
+            const elements = myChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+    
+            if (elements.length) {
+                const element = elements[0];
+                const index = element.index;
+                const label = myChart.data.labels[index];
+
+        // Ищем аннотацию, соответствующую выбранной метке (label)
+                const annotationIndex = annotations.findIndex(ann => ann.value === label);
+        
+                if (annotationIndex !== -1) {
+            // Удаляем аннотацию
+                    annotations.splice(annotationIndex, 1);
+                    updateChart();  // Обновляем график после удаления аннотации
+                }
+            }
+        });
+
+
+    // Обновляем размеры графика при изменении размера окна
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('myChart');
+            const dpr = window.devicePixelRatio || 1;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            if (myChart) {
+                myChart.resize();
+            }
+        });
+
+        updateChart(); // Обновляем график при загрузке страницы
+    });
+
+
+    function take_the_avarage(summaryTableId, dataTableId, tabNumber, refNumber) {
+        const table_sum = document.getElementById(summaryTableId);
+        const table_data = document.getElementById(dataTableId);
+        const lastRowIndex = table_sum.rows.length - 1;
+
+    // Проверяем, что в таблицах есть строки
+        if (lastRowIndex < 0) return; // Если таблица пуста, выходим из функции
+
+    // Клонируем последнюю строку
+        const lastRow = table_sum.rows[lastRowIndex];
+        const lastRow_data = table_data.rows[lastRowIndex];
+        const rowCopy = lastRow.cloneNode(true);
+        const rowCopy_data = lastRow_data.cloneNode(true);
+
+        const ts = parseInt(refNumber) + 4; 
+
+    // Ищем таблицы на новой вкладке
+        const table_sum_comp = document.getElementById('summaryTable' + ts);
+        const table_data_comp = document.getElementById('dataTable' + ts);
+
+    // Очищаем таблицы перед добавлением новых данных
+        table_sum_comp.innerHTML = '';
+        table_data_comp.innerHTML = '';
+
+    // Если таблицы пустые, добавляем заголовок
+        if (table_sum.rows.length > 0) {
+        const headerRow = table_sum.rows[0].cloneNode(true);
+        table_sum_comp.appendChild(headerRow);
+        }
+        if (table_data.rows.length > 0) {
+            const headerRow_data = table_data.rows[0].cloneNode(true);
+            table_data_comp.appendChild(headerRow_data);
+        }
+
+    // Добавляем клонированные строки в таблицы на новой вкладке
+        table_sum_comp.appendChild(rowCopy);
+        table_data_comp.appendChild(rowCopy_data);
+    }
+
+    function calculateDifference(referenceTable_sum, dataTable_sum,referenceTable_dat, dataTable_dat) {
+        const refRows_sum = referenceTable_sum.rows;
+        const dataRows_sum = dataTable_sum.rows;
+        const refRows_dat = referenceTable_dat.rows;
+        const dataRows_dat = dataTable_dat.rows;
+
+    // Убедимся, что обе таблицы имеют одинаковое количество строк
+        if (refRows_sum.length !== dataRows_sum.length && refRows_sum.length!==0 &&  dataRows_sum.length !==0) {
+            console.warn("Tables have different number of rows.");
+            return;
+        }
+        if (refRows_dat.length !== dataRows_dat.length && refRows_dat.length!==0 &&  dataRows_dat.length !==0) {
+            console.warn("Tables have different number of rows.");
+            return;
+        }
+
+        const comparisonTable_sum = document.getElementById('summaryTable7');
+        comparisonTable_sum.innerHTML = ''; // Очищаем таблицу сравнения
+        const comparisonTable_dat = document.getElementById('dataTable7');
+        comparisonTable_dat.innerHTML = ''; // Очищаем таблицу сравнения
+
+    // Добавляем заголовок
+
+
+        const summaryHeaderRow_sum = document.createElement('tr');
+        comparisonTable_sum.innerHTML = '<th>Sum</th><th>Sum>44</th><th>Ratio</th>';
+        comparisonTable_sum.appendChild(summaryHeaderRow_sum);
+
+        const summaryHeaderRow_dat = document.createElement('tr');
+        const firstCell = document.createElement('th');
+        firstCell.textContent = '№';
+        summaryHeaderRow_dat.appendChild(firstCell);
+        const numLabels = 100;
+        for (let i = 1; i <= numLabels; i++) {
+            const th = document.createElement('th');
+            th.textContent = i; // Номера измерений в обычном формате
+            summaryHeaderRow_dat.appendChild(th);
+        }
+    
+
+    // Вычисляем разницу
+        for (let i = 1; i < refRows_sum.length; i++) { // начинаем с 1, чтобы пропустить заголовок
+            const refRow = refRows_sum[i];
+            const dataRow = dataRows_sum[i];
+            const newRow = document.createElement('tr');
+
+            for (let j = 0; j < refRow.cells.length-1; j++) {
+                
+                const refCell = parseFloat(refRow.cells[j].innerText) || 0;
+                const dataCell = parseFloat(dataRow.cells[j].innerText) || 0;
+                const diff = dataCell - refCell
+            
+
+                const newCell = document.createElement('td');
+                newCell.innerText = diff.toExponential(4); // Форматируем разницу
+                newRow.appendChild(newCell);
+            }
+            const ratio_cell = document.createElement('td');
+            const newrow1 = parseFloat(newRow.cells[0].innerText) 
+            const newrow2 = parseFloat(newRow.cells[1].innerText) 
+            const ratio_end = newrow2/newrow1;
+            ratio_cell.innerText = ratio_end.toExponential(4); 
+            newRow.appendChild(ratio_cell);
+
+            comparisonTable_sum.appendChild(newRow);
+        }
+    
+        for (let i = 1; i < refRows_dat.length; i++) { // начинаем с 1, чтобы пропустить заголовок
+            const refRow = refRows_dat[i];
+            const dataRow = dataRows_dat[i];
+            const newRow = document.createElement('tr');
+
+            // Создаем первую ячейку с текстом "Average"
+            const averageCell = document.createElement('td');
+            averageCell.innerText = "Average";
+            newRow.appendChild(averageCell);
+
+            for (let j = 1; j < refRow.cells.length; j++) {
+                const refCell = parseFloat(refRow.cells[j].innerText) || 0;
+                const dataCell = parseFloat(dataRow.cells[j].innerText) || 0;
+                const diff = dataCell - refCell;
+                const newCell = document.createElement('td');
+                newCell.innerText = diff.toExponential(4); // Форматируем разницу
+                newRow.appendChild(newCell);
+            }
+
+        comparisonTable_dat.appendChild(summaryHeaderRow_dat);
+        comparisonTable_dat.appendChild(newRow);
+        }
+    
+    }
+
+    function updateComparisonTable(tabNumber, refNumber) {
+
+        const referenceTable_sum = document.getElementById('summaryTable5');
+        const referenceTable_dat = document.getElementById('dataTable5');
+        const dataTable_sum = document.getElementById('summaryTable6');
+        const dataTable_dat = document.getElementById('dataTable6');
+        const comparisonTable_sum = document.getElementById('summaryTable7');
+        const comparisonTable_dat = document.getElementById('dataTable7');
+        calculateDifference(referenceTable_sum, dataTable_sum,referenceTable_dat, dataTable_dat)
+    
+    }
+
+// Устанавливаем обработчик событий для кнопок "Send to comparison"
+    document.querySelectorAll('.sendToComparison').forEach(button => {
+        button.addEventListener('click', function() {
+            const tabNumber = this.getAttribute('data-tab'); // Получаем номер вкладки
+            const refNumber = this.getAttribute('data-ref'); // Получаем номер ссылки
+            const summaryTableId = 'summaryTable' + tabNumber;
+            const dataTableId = 'dataTable' + tabNumber;
+
+        
+            take_the_avarage(summaryTableId, dataTableId, tabNumber, refNumber);
+            updateComparisonTable(tabNumber, refNumber);
+            if (tabNumber==="3" || tabNumber==="4" ) {
+                var table = document.getElementById('summaryTable6');
+                var data_table = document.getElementById('dataTable6');
+                var total = table.rows[1].cells[0].innerText;
+                var total_44 = table.rows[1].cells[1].innerText;
+                var total_ratio = table.rows[1].cells[2].innerText;
+                var water_peak = data_table.rows[1].cells[18].innerText
+                document.getElementById('sum_of_all_scan').innerText = total;
+                document.getElementById('sum_of_44').innerText = total_44;
+                document.getElementById('contribution_of_44').innerText = total_ratio;
+                document.getElementById('water-peak').innerText = water_peak;
+            }
+            if (tabNumber==="1" || tabNumber==="2" ) {
+                var table = document.getElementById('summaryTable5');
+                var valueToInsert = table.rows[1].cells[0].innerText;
+                document.getElementById('sum_of_all_scan_ref').innerText = valueToInsert;
+            }
+            var today = new Date();
+            var formattedDate = today.getDate().toString().padStart(2, '0') + '.' + 
+                    (today.getMonth() + 1).toString().padStart(2, '0') + '.' + 
+                    today.getFullYear();
+            document.getElementById('data-final-1').innerText = formattedDate;
+            document.getElementById('data-final-2').innerText = formattedDate;
+            document.getElementById('data-final-3').innerText = formattedDate;
+            document.getElementById('data-final-4').innerText = formattedDate;
+        });
+    });
+
+
+    function setupControls(tabNumber) {
+        document.getElementById('startInterval' + tabNumber).addEventListener('change', () => {
+            const fileInputId = 'fileInput' + tabNumber;
+            const dataTableId = 'dataTable' + tabNumber;
+            const summaryTableId = 'summaryTable' + tabNumber;
+            const type_file = document.querySelector('.choise-of-the-quelle' + '[data-tab-number="' +tabNumber + '"]');
+            console.log (type_file);
+            if (document.getElementById(fileInputId).files[0]) {
+                if (type_file.getAttribute('value') === "Karabo") {
+                    processFile2(document.getElementById(fileInputId).files[0], dataTableId, summaryTableId, tabNumber);
+                }else{
+                    processFile1(document.getElementById(fileInputId).files[0], dataTableId, summaryTableId, tabNumber);
+                }
+            }
+        });
+
+        
+        document.getElementById('endInterval' + tabNumber).addEventListener('change', () => {
+            const fileInputId = 'fileInput' + tabNumber;
+            const dataTableId = 'dataTable' + tabNumber;
+            const summaryTableId = 'summaryTable' + tabNumber;
+            const type_file = document.querySelector('.choise-of-the-quelle' + '[data-tab-number="' +tabNumber + '"]');
+            console.log ("type:",type_file.getAttribute('value'));
+            if (document.getElementById(fileInputId).files[0]) {
+                if (type_file.getAttribute('value') === "Karabo") {
+                    processFile2(document.getElementById(fileInputId).files[0], dataTableId, summaryTableId, tabNumber);
+                }else{
+                    processFile1(document.getElementById(fileInputId).files[0], dataTableId, summaryTableId, tabNumber);
+                }
+            }
+        });
+    }
+    
+    function downloadChart_sample() {
+            const canvas = document.getElementById('myChart');
+            const link = document.createElement('a');
+            const dataURL = canvas.toDataURL('image/png'); // Получаем Data URL графика
+            const resultContainer_sample = document.getElementById('resultChartContainer_sample');
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.style.maxWidth = '100%';
+            resultContainer_sample.innerHTML = ''; 
+            resultContainer_sample.appendChild(img); 
+
+        }
+        function downloadChart_reference() {
+            const canvas = document.getElementById('myChart');
+            const link = document.createElement('a');
+            const dataURL = canvas.toDataURL('image/png'); // Получаем Data URL графика
+            const resultContainer_reference = document.getElementById('resultChartContainer_reference');
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.style.maxWidth = '100%';
+            resultContainer_reference.innerHTML = ''; 
+            resultContainer_reference.appendChild(img); 
+
+        }
+        function downloadChart_summary() {
+            const canvas = document.getElementById('myChart');
+            const link = document.createElement('a');
+            const dataURL = canvas.toDataURL('image/png'); // Получаем Data URL графика
+            const resultContainer_summary = document.getElementById('resultChartContainer_summary');
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.style.maxWidth = '100%';
+            resultContainer_summary.innerHTML = ''; 
+            resultContainer_summary.appendChild(img); 
+
+        }
+
+    document.getElementById('downloadBtn_refernce').addEventListener('click', downloadChart_reference);
+    document.getElementById('downloadBtn_sample').addEventListener('click', downloadChart_sample);
+    document.getElementById('downloadBtn_summary').addEventListener('click', downloadChart_summary);
+
+    function saveAsPDF() {
+        // Получаем содержимое элементов, которые нужно сохранить как PDF
+        var elementToPrint_1 = document.getElementById('end-file-1').outerHTML;
+        var elementToPrint_2 = document.getElementById('end-file-2').outerHTML;
+        var elementToPrint_3 = document.getElementById('end-file-3').outerHTML;
+        
+        // Объединяем содержимое всех трех элементов
+        var combinedContent = elementToPrint_1 + elementToPrint_2 + elementToPrint_3;
+        // Создаем новое окно
+        var printWindow = window.open('', '', 'width=800,height=600');
+        
+        // Копируем все стили из основного документа
+        var styles = '';
+        Array.from(document.styleSheets).forEach(styleSheet => {
+            try {
+                // Если это CSS-файл (<link>), добавляем его через <link> в новое окно
+                if (styleSheet.href) {
+                    styles += `<link rel="stylesheet" href="${styleSheet.href}">`;
+                } else {
+                    // Если это встроенный стиль (<style>), копируем его содержимое
+                    Array.from(styleSheet.cssRules).forEach(rule => {
+                        styles += `<style>${rule.cssText}</style>`;
+                    });
+                }
+            } catch (e) {
+                console.log("Style is not founded:", styleSheet.href);
+            }
+        });
+
+        function updateCheckboxHTML(element) {
+        // Находим все чекбоксы в элементе
+            var checkboxes = element.querySelectorAll('input[type="checkbox"]');
+            
+            // Обновляем HTML, добавляя атрибут checked, если чекбокс отмечен
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    checkbox.setAttribute('checked', 'checked');  // Добавляем атрибут checked в HTML
+                } else {
+                    checkbox.removeAttribute('checked'); // Убираем атрибут, если чекбокс не отмечен
+                }
+            });
+        }
+
+        var element_1 = document.getElementById('end-file-1');
+        var element_2 = document.getElementById('end-file-2');
+        var element_3 = document.getElementById('end-file-3');
+
+        updateCheckboxHTML(element_1);
+        updateCheckboxHTML(element_2);
+        updateCheckboxHTML(element_3);
+
+        var elementToPrint_1 = element_1.outerHTML;
+        var elementToPrint_2 = element_2.outerHTML;
+        var elementToPrint_3 = element_3.outerHTML;
+
+        var combinedContent = elementToPrint_1 + elementToPrint_2 + elementToPrint_3;
+
+
+
+        
+        // Добавляем содержимое для печати в новое окно
+        printWindow.document.write('<html><head><title>Print</title>');
+        printWindow.document.write(styles);  // Вставляем стили
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(combinedContent);
+        printWindow.document.write('</body></html>');
+        
+        // Ждем, пока содержимое загрузится, затем вызываем функцию печати
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        
+        // Закрываем окно после печати (в Safari это может не сработать автоматически)
+    }
+    document.getElementById('saveButton').addEventListener('click', function() {
+    // Создание изображения в формате PNG
+        const link = document.createElement('a');
+        link.href = myChart.toBase64Image();
+        link.download = 'my_chart.png';  // Имя файла для скачивания
+        link.click();
+    });
+
+    // Инициализируем обработчики для всех вкладок
+    [1, 2, 3, 4].forEach(setupControls);
+
+    // Показываем первую вкладку по умолчанию
+    showTab(1);
+
+
+            // Привязываем событие нажатия на кнопку к функции drawChart
+</script>
+
+</body>
+</html>
